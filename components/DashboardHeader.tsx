@@ -15,7 +15,7 @@ export default async function DashboardHeader() {
     const supabase = await createClient()
     const { data: { user }, error } = await supabase.auth.getUser()
     // Get the user's plan from Stripe
-    const stripePlan = getStripePlan(user!.email!)
+    //const stripePlan = getStripePlan(user!.email!)
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -24,9 +24,6 @@ export default async function DashboardHeader() {
                     <Link className="mr-2 flex items-center space-x-2" href="">
                         <Image src="/logo.png" alt="logo" width={25} height={25} />
                     </Link>
-                    <Suspense fallback={<Badge variant="outline" className="mr-2"><Skeleton className="w-[50px] h-[20px] rounded-full" /></Badge>}>
-                        <Badge variant="outline" className="mr-2">{stripePlan}</Badge>
-                    </Suspense>
                     <nav className="flex items-center space-x-6 text-sm font-medium">
                         <Link className="transition-colors hover:text-foreground/80 text-foreground" href="#">
                             Home

@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useActionState } from 'react'
+import { useActionState } from "react"
 import { forgotPassword } from '@/app/auth/actions'
 export default function ForgotPasswordForm() {
     const initialState = {
