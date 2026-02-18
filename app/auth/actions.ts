@@ -11,7 +11,7 @@ import { eq } from 'drizzle-orm'
 const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL || "http://localhost:3000"
 
 export async function resetPassword(currentState: { message: string }, formData: FormData) {
-    const supabase = createClient()
+    const supabase = await createClient()
     const passwordData = {
         password: formData.get('password') as string,
         confirm_password: formData.get('confirm_password') as string,
@@ -34,7 +34,7 @@ export async function resetPassword(currentState: { message: string }, formData:
 
 
 export async function forgotPassword(currentState: { message: string }, formData: FormData) {
-    const supabase = createClient()
+    const supabase = await createClient()
     const email = formData.get('email') as string
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${PUBLIC_URL}/forgot-password/reset` })
 
@@ -46,7 +46,7 @@ export async function forgotPassword(currentState: { message: string }, formData
 
 
 export async function signup(currentState: { message: string }, formData: FormData) {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     const data = {
         email: formData.get('email') as string,
@@ -56,7 +56,7 @@ export async function signup(currentState: { message: string }, formData: FormDa
 
     // Check if user exists in our database first
     const existingDBUser = await db.select().from(usersTable).where(eq(usersTable.email, data.email))
-    
+
     if (existingDBUser.length > 0) {
         return { message: "An account with this email already exists. Please login instead." }
     }
@@ -87,14 +87,14 @@ export async function signup(currentState: { message: string }, formData: FormDa
     try {
         // create Stripe Customer Record using signup response data
         const stripeID = await createStripeCustomer(signUpData.user.id, signUpData.user.email!, data.name)
-        
+
         // Create record in DB
-        await db.insert(usersTable).values({ 
+        await db.insert(usersTable).values({
             id: signUpData.user.id,
-            name: data.name, 
-            email: signUpData.user.email!, 
-            stripe_id: stripeID, 
-            plan: 'none' 
+            name: data.name,
+            email: signUpData.user.email!,
+            stripe_id: stripeID,
+            plan: 'none'
         })
     } catch (err) {
         console.error("Error in signup:", err instanceof Error ? err.message : "Unknown error")
@@ -107,7 +107,7 @@ export async function signup(currentState: { message: string }, formData: FormDa
 
 
 export async function loginUser(currentState: { message: string }, formData: FormData) {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     const data = {
         email: formData.get('email') as string,
@@ -126,14 +126,14 @@ export async function loginUser(currentState: { message: string }, formData: For
 
 
 export async function logout() {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { error } = await supabase.auth.signOut()
     redirect('/login')
 }
 
 
 export async function signInWithGoogle() {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -148,7 +148,7 @@ export async function signInWithGoogle() {
 
 
 export async function signInWithGithub() {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'github',
         options: {
