@@ -25,17 +25,18 @@ export const ProductCard = ({ product }: Props) => {
         })
     }
     return (
-
         <Card className="group hover:shadow-2xl transition duration-300 py-0 h-full flex flex-col border-gray-300 gap-0">
             {product.images && product.images[0] && (
                 <div className="relative h-60 w-full">
                     <Image
                         src={product.images[0]}
                         alt={product.name}
-                        layout="fill"
-                        objectFit="cover"
                         className="group-hover:opacity-90 transition-opacity duration-300 rounded-t-lg"
-                    />
+                        fill
+                        sizes="100vw"
+                        style={{
+                            objectFit: "cover"
+                        }} />
                 </div>
             )}
             <CardHeader className="p-4">

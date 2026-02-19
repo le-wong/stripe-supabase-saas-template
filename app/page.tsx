@@ -157,11 +157,10 @@ export default async function LandingPage() {
         </section>
         <section className="w-full py-10 md:py-20 lg:py-32 bg-muted" id="pricing">
           <div className="container px-4 md:px-6">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-4">Pricing Plans</h2>
+            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-4">Featured Courses</h2>
             <p className="text-muted-foreground text-center mb-8 md:text-xl">Choose the perfect plan for your needs</p>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              <ProductList products={products} />
-            </div>
+            {/*TODO: Replace list with featured products */}
+            <ProductList products={products} />
           </div>
         </section>
         <section className="w-full py-10 md:py-20 lg:py-32 ">

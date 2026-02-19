@@ -3,6 +3,7 @@
 import Stripe from "stripe";
 import { ProductCard } from "./ProductCard";
 import { useMemo, useState } from "react";
+import { Button } from "./ui/button";
 
 interface Props {
     products: Stripe.Product[];
@@ -66,7 +67,7 @@ export const ProductList = ({ products }: Props) => {
       rounded-full border px-3 py-1 text-sm transition
       ${isActive
                 ? "bg-blue-600 text-white border-blue-600"
-                : "bg-white border-gray-300 hover:bg-gray-50"
+                : "bg-white text-black border-gray-300 hover:bg-gray-50"
             }
     `;
     };
@@ -81,14 +82,13 @@ export const ProductList = ({ products }: Props) => {
                     </span>
 
                     {POSITION_TAGS.map((tag) => (
-                        <button
+                        <Button
                             key={tag}
-                            type="button"
                             onClick={() => onTagClick(tag)}
                             className={getTagClasses(tag)}
                         >
                             {tag}
-                        </button>
+                        </Button>
                     ))}
                 </div>
 
@@ -99,27 +99,25 @@ export const ProductList = ({ products }: Props) => {
                     </span>
 
                     {STATE_TAGS.map((tag) => (
-                        <button
+                        <Button
                             key={tag}
-                            type="button"
                             onClick={() => onTagClick(tag)}
                             className={getTagClasses(tag)}
                         >
                             {tag}
-                        </button>
+                        </Button>
                     ))}
                 </div>
 
                 {/* Reset */}
                 <div className="mt-3 flex justify-center">
-                    <button
-                        type="button"
+                    <Button
                         onClick={onReset}
                         disabled={resetDisabled}
-                        className="rounded-full border border-gray-300 bg-white px-4 py-1 text-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="rounded-full border border-gray-300 bg-white px-4 py-1 text-sm text-black hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         Reset
-                    </button>
+                    </Button>
                 </div>
             </div>
 

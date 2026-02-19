@@ -102,7 +102,7 @@ export async function signup(currentState: { message: string }, formData: FormDa
     }
 
     revalidatePath("/", "layout")
-    redirect("/subscribe")
+    redirect("/dashboard")
 }
 
 
