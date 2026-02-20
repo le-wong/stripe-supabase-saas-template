@@ -21,13 +21,13 @@ export default async function DashboardHeaderProfileDropdown() {
     return (
         <nav className="flex items-center">
             <Button variant="ghost" size="icon" className="mr-2">
-                <Bell className="h-4 w-4" />
+                <Bell className="h-6 w-6" />
                 <span className="sr-only">Notifications</span>
             </Button>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon">
-                        <User className="h-4 w-4" />
+                        <User className="h-6 w-6" />
                         <span className="sr-only">Open user menu</span>
                     </Button>
                 </DropdownMenuTrigger>
@@ -46,10 +46,10 @@ export default async function DashboardHeaderProfileDropdown() {
                             <span>Settings</span>
                         </DropdownMenuItem>
                     </Link>
-                    <Link href="#">
+                    <Link href={billingPortalURL}>
                         <DropdownMenuItem>
                             <ReceiptText className="mr-2 h-4 w-4" />
-                            <Link href={billingPortalURL}>Billing</Link>
+                            <span>Billing</span>
                         </DropdownMenuItem>
                     </Link>
                     <Link href="#">
