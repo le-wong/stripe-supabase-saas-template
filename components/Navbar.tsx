@@ -25,9 +25,9 @@ export default async function Navbar() {
                         <Link className="transition-colors hover:text-foreground/80 text-foreground" href={user ? "/dashboard" : "/"}>
                             Home
                         </Link>
-                        <Link className="transition-colors hover:text-foreground/80 text-foreground/60" href="#">
-                            Projects
-                        </Link>
+                        {user && <Link className="transition-colors hover:text-foreground/80 text-foreground/60" href="#">
+                            My Courses
+                        </Link>}
                         <Link className="transition-colors hover:text-foreground/80 text-foreground/60" href="#">
                             Tasks
                         </Link>

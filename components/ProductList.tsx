@@ -51,10 +51,11 @@ export const ProductList = ({ products }: Props) => {
     const filteredProducts = products.filter((product) => {
         if (activeTokens.length === 0) return true;
 
-        const haystackText = `${product.name} ${product.description ?? ""}`;
+        //TODO: process state and position tags separately to handle when only one set is defined
+        const haystackText = `${product.metadata["state"]} ${product.metadata["position"] ?? ""}`;
         const productTokenSet = new Set(tokenizeWords(haystackText));
 
-        return activeTokens.every((t) => productTokenSet.has(t));
+        return ((productTokenSet.has("undefined")) ? true : activeTokens.every((t) => productTokenSet.has(t)));
     });
 
     const resetDisabled = activeTokens.length === 0;

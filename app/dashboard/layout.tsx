@@ -27,6 +27,10 @@ export default async function DashboardLayout({
     } = await supabase.auth.getUser()
 
     // check user plan in db
+    //TODO: change to 
+    // (1) check user's course entitlements and
+    // (2) report completion/progress per course and
+    // (3) allow start/continue/review course results
     const checkUserInDB = await db.select().from(usersTable).where(eq(usersTable.email, user!.email!))
     if (checkUserInDB[0].plan === "none") {
         console.log("User has no plan selected")
