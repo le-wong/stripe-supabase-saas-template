@@ -9,8 +9,9 @@ interface Props {
     products: Stripe.Product[];
 }
 
-const POSITION_TAGS = ["Electrician", "Plumber", "Contractor", "HVAC"] as const;
-const STATE_TAGS = ["OR", "WA", "CA", "TX", "FL", "NY"] as const;
+//TODO: get all from stripe products?
+const POSITION_TAGS = ["Electrician", "Plumber", "Contractor", "HVAC"];
+const STATE_TAGS = ["OR", "WA", "CA", "TX", "FL", "NY"];
 
 function normalizeSpaces(s: string) {
     return s.replace(/\s+/g, " ").trim();
@@ -25,44 +26,59 @@ function tokenizeWords(s: string) {
     return cleaned ? cleaned.split(/\s+/).filter(Boolean) : [];
 }
 
-export const ProductList = ({ products }: Props) => {
-    const [searchTerm, setSearchTerm] = useState<string>("");
+function updateTokens(previousString: string, tag: string) {
+    const tokens = tokenizeWords(previousString);
+    const t = tag.toLowerCase();
 
-    const activeTokens = useMemo(() => tokenizeWords(searchTerm), [searchTerm]);
+    // ✅ If already selected → remove it
+    if (tokens.includes(t)) {
+        const filtered = tokens.filter((token) => token !== t);
+        return filtered.join(" ");
+    }
+
+    // ✅ Otherwise add it
+    return normalizeSpaces(`${previousString} ${tag}`);
+}
+
+export const ProductList = ({ products }: Props) => {
+    const [searchState, setSearchState] = useState<string>("");
+    const [searchPosition, setSearchPosition] = useState<string>("");
+
+    const activePositionTokens = useMemo(() => tokenizeWords(searchPosition), [searchPosition]);
+    const activeStateTokens = useMemo(() => tokenizeWords(searchState), [searchState]);
 
     const onTagClick = (tag: string) => {
-        setSearchTerm((prev) => {
-            const tokens = tokenizeWords(prev);
-            const t = tag.toLowerCase();
-
-            // ✅ If already selected → remove it
-            if (tokens.includes(t)) {
-                const filtered = tokens.filter((token) => token !== t);
-                return filtered.join(" ");
-            }
-
-            // ✅ Otherwise add it
-            return normalizeSpaces(`${prev} ${tag}`);
-        });
+        if (STATE_TAGS.includes(tag)) {
+            setSearchState((prev) => {
+                return updateTokens(prev, tag);
+            });
+        }
+        else if (POSITION_TAGS.includes(tag)) {
+            setSearchPosition((prev) => {
+                return updateTokens(prev, tag);
+            });
+        }
     };
 
-    const onReset = () => setSearchTerm("");
+    const onReset = () => {
+        setSearchState("");
+        setSearchPosition("");
+    }
 
     const filteredProducts = products.filter((product) => {
-        if (activeTokens.length === 0) return true;
+        if (activeStateTokens.length === 0 && activePositionTokens.length === 0) { return true; }
 
-        //TODO: process state and position tags separately to handle when only one set is defined
-        const haystackText = `${product.metadata["state"]} ${product.metadata["position"] ?? ""}`;
-        const productTokenSet = new Set(tokenizeWords(haystackText));
+        const stateTags = new Set(tokenizeWords(`${product.metadata["state"] ?? ""}`));
+        const positionTags = new Set(tokenizeWords(`${product.metadata["position"] ?? ""}`));
 
-        return ((productTokenSet.has("undefined")) ? true : activeTokens.every((t) => productTokenSet.has(t)));
+        return ((stateTags.size === 0 || activeStateTokens.every((t) => stateTags.has(t))) && (positionTags.size === 0 || activePositionTokens.every((t) => positionTags.has(t))));
     });
 
-    const resetDisabled = activeTokens.length === 0;
+    const resetDisabled = (activeStateTokens.length === 0 && activePositionTokens.length === 0);
 
     // Helper to style buttons
     const getTagClasses = (tag: string) => {
-        const isActive = activeTokens.includes(tag.toLowerCase());
+        const isActive = (activePositionTokens.includes(tag.toLowerCase()) || activeStateTokens.includes(tag.toLowerCase()));
 
         return `
       rounded-full border px-3 py-1 text-sm transition
