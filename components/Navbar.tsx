@@ -2,16 +2,15 @@ import { Bell, Menu, Search } from "lucide-react"
 import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import Image from 'next/image'
 import { createClient } from '@/utils/supabase/server'
-import DashboardHeaderProfileDropdown from "./DashboardHeaderProfileDropdown"
+import NavbarProfileDropdown from "./NavbarProfileDropdown"
 import { Badge } from "@/components/ui/badge"
 import { Suspense } from "react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { CartButton } from "./Cart"
 
-export default async function DashboardHeader() {
+export default async function Navbar() {
     const supabase = await createClient()
     const { data: { user }, error } = await supabase.auth.getUser()
 
@@ -23,7 +22,7 @@ export default async function DashboardHeader() {
                         <Image src="/logo.png" alt="logo" width={25} height={25} />
                     </Link>
                     <nav className="flex items-center space-x-6 text-sm font-medium">
-                        <Link className="transition-colors hover:text-foreground/80 text-foreground" href="/dashboard">
+                        <Link className="transition-colors hover:text-foreground/80 text-foreground" href={user ? "/dashboard" : "/"}>
                             Home
                         </Link>
                         <Link className="transition-colors hover:text-foreground/80 text-foreground/60" href="#">
@@ -45,19 +44,7 @@ export default async function DashboardHeader() {
                     <span className="sr-only">Toggle Menu</span>
                 </Button>
                 <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-                    <div className="w-full flex-1 md:w-auto md:flex-none">
-                        <form>
-                            <div className="relative">
-                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                <Input
-                                    type="search"
-                                    placeholder="Search..."
-                                    className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
-                                />
-                            </div>
-                        </form>
-                    </div>
-                    {user ? <DashboardHeaderProfileDropdown /> :
+                    {user ? <NavbarProfileDropdown /> :
                         <Button className="mx-2 md:mx-4 lg:mx-6 xl:mx-10" >
                             <Link className="text-sm font-medium hover:underline underline-offset-4" href="/login">
                                 Login

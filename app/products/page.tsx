@@ -1,6 +1,6 @@
 import { ProductList } from "@/components/ProductList";
 import { stripe } from "@/utils/stripe/api";
-import DashboardHeader from "@/components/DashboardHeader";
+import Navbar from "@/components/Navbar";
 
 export default async function ProductsPage() {
     const products = await stripe.products.list({
@@ -9,7 +9,7 @@ export default async function ProductsPage() {
 
     return (
         <div>
-            <DashboardHeader />
+            <Navbar />
             <div className="pb-8">
                 <h1 className="text-3xl font-bold leading-none tracking-tight text-foreground text-center mb-8">
                     All Products

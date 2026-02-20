@@ -5,6 +5,7 @@ import Link from "next/link"
 import { Star, Check, Coins, UserCheck, Database } from "lucide-react"
 import Stripe from 'stripe'
 import { ProductList } from "@/components/ProductList"
+import Navbar from "@/components/Navbar"
 
 // Types
 interface StripeProduct {
@@ -43,28 +44,7 @@ export default async function LandingPage() {
 
   return (
     <div className="flex flex-col min-h-[100dvh]">
-      <header className="px-4 lg:px-6 h-16 flex items-center  bg-white border-b fixed border-b-slate-200 w-full">
-        <Link className="flex items-center justify-center" href="#">
-          <Image src="/logo.png" alt="logo" width={50} height={50} />
-          <span className="sr-only">Acme Inc</span>
-        </Link>
-        <nav className="ml-auto flex gap-4 sm:gap-6">
-          <a className="text-sm font-medium hover:underline underline-offset-4" href="#features">
-            Features
-          </a>
-          <a className="text-sm font-medium hover:underline underline-offset-4" href="#testimonials">
-            Testimonials
-          </a>
-          <Link className="text-sm font-medium hover:underline underline-offset-4" href="/products">
-            All Courses
-          </Link>
-        </nav>
-        <Button className="mx-2 md:mx-4 lg:mx-6 xl:mx-10" >
-          <Link className="text-sm font-medium hover:underline underline-offset-4" href="/login">
-            Login
-          </Link>
-        </Button>
-      </header>
+      <Navbar />
       <main className="flex-1">
         <section className="w-full py-20 lg:py-32 xl:py-40">
           <div className="container px-4 md:px-6 flex flex-col md:flex-row ">

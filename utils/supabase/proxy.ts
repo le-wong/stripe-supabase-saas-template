@@ -54,6 +54,7 @@ export async function updateSession(request: NextRequest) {
     }
     // // If user is logged in, redirect to dashboard
     if (user && request.nextUrl.pathname === '/') {
+        console.log('sneaky redirect')
         url.pathname = '/dashboard'
         return NextResponse.redirect(url)
     }

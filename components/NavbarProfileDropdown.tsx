@@ -14,7 +14,7 @@ import { createClient } from '@/utils/supabase/server'
 import { logout } from '@/app/auth/actions'
 import { generateStripeBillingPortalLink } from "@/utils/stripe/api"
 
-export default async function DashboardHeaderProfileDropdown() {
+export default async function NavbarProfileDropdown() {
     const supabase = await createClient()
     const { data: { user }, error } = await supabase.auth.getUser()
     const billingPortalURL = await generateStripeBillingPortalLink(user!.email!)
@@ -34,7 +34,7 @@ export default async function DashboardHeaderProfileDropdown() {
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <Link href="#">
+                    <Link href="/dashboard">
                         <DropdownMenuItem>
                             <User className="mr-2 h-4 w-4" />
                             <span>Profile</span>

@@ -1,4 +1,4 @@
-import DashboardHeader from "@/components/DashboardHeader";
+import Navbar from "@/components/Navbar";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { createClient } from '@/utils/supabase/server'
@@ -36,7 +36,7 @@ export default async function DashboardLayout({
 
     return (
         < div >
-            <DashboardHeader />
+            <Navbar />
             {children}
         </div >
     );
