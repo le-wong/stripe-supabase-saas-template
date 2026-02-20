@@ -8,14 +8,14 @@ export default async function ProductsPage() {
     });
 
     return (
-        <div><div>
+        <div>
             <DashboardHeader />
-        </div>
             <div className="pb-8">
                 <h1 className="text-3xl font-bold leading-none tracking-tight text-foreground text-center mb-8">
                     All Products
                 </h1>
                 <ProductList products={products.data} />
-            </div></div>
+            </div>
+        </div>
     );
 }

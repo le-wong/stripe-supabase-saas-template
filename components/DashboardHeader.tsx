@@ -10,16 +10,12 @@ import { Badge } from "@/components/ui/badge"
 import { getStripePlan } from "@/utils/stripe/api"
 import { Suspense } from "react"
 import { Skeleton } from "@/components/ui/skeleton"
-import { ShoppingCartIcon } from "lucide-react"
-import { useCartStore } from "@/app/store/cart-store"
+import { CartButton } from "./Cart"
 
 export default async function DashboardHeader() {
     const supabase = await createClient()
     const { data: { user }, error } = await supabase.auth.getUser()
 
-    const { items } = useCartStore()
-
-    const cartCount = items.reduce((acc, item) => acc + item.quantity, 0)
     // Get the user's plan from Stripe
     //const stripePlan = getStripePlan(user!.email!)
 
@@ -66,15 +62,7 @@ export default async function DashboardHeader() {
                         </form>
                     </div>
                     <DashboardHeaderProfileDropdown />
-                    {/* Cart */}
-                    <Link href="/checkout" className="relative">
-                        <ShoppingCartIcon className="h-6 w-6" />
-                        {cartCount > 0 && (
-                            <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
-                                {cartCount}
-                            </span>
-                        )}
-                    </Link>
+                    <CartButton />
                 </div>
             </div>
         </header>
