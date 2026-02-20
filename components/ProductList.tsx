@@ -71,7 +71,8 @@ export const ProductList = ({ products }: Props) => {
         const stateTags = new Set(tokenizeWords(`${product.metadata["state"] ?? ""}`));
         const positionTags = new Set(tokenizeWords(`${product.metadata["position"] ?? ""}`));
 
-        return ((stateTags.size === 0 || activeStateTokens.every((t) => stateTags.has(t))) && (positionTags.size === 0 || activePositionTokens.every((t) => positionTags.has(t))));
+        return (((activeStateTokens.length > 0 && stateTags.size === 0) || activeStateTokens.every((t) => stateTags.has(t)))
+            && ((activePositionTokens.length > 0 && positionTags.size === 0) || activePositionTokens.every((t) => positionTags.has(t))));
     });
 
     const resetDisabled = (activeStateTokens.length === 0 && activePositionTokens.length === 0);
