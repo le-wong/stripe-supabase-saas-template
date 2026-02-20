@@ -57,7 +57,14 @@ export default async function DashboardHeader() {
                             </div>
                         </form>
                     </div>
-                    <DashboardHeaderProfileDropdown />
+                    {user ? <DashboardHeaderProfileDropdown /> :
+                        <Button className="mx-2 md:mx-4 lg:mx-6 xl:mx-10" >
+                            <Link className="text-sm font-medium hover:underline underline-offset-4" href="/login">
+                                Login
+                            </Link>
+                        </Button>
+                    }
+
                     <CartButton />
                 </div>
             </div>

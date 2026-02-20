@@ -145,19 +145,3 @@ export async function signInWithGoogle() {
         redirect(data.url) // use the redirect API for your server framework
     }
 }
-
-
-export async function signInWithGithub() {
-    const supabase = await createClient()
-    const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'github',
-        options: {
-            redirectTo: `${PUBLIC_URL}/auth/callback`,
-        },
-    })
-
-    if (data.url) {
-        redirect(data.url) // use the redirect API for your server framework
-    }
-
-}

@@ -55,13 +55,13 @@ export default async function LandingPage() {
           <a className="text-sm font-medium hover:underline underline-offset-4" href="#testimonials">
             Testimonials
           </a>
-          <a className="text-sm font-medium hover:underline underline-offset-4" href="#pricing">
-            Pricing
-          </a>
+          <Link className="text-sm font-medium hover:underline underline-offset-4" href="/products">
+            All Courses
+          </Link>
         </nav>
         <Button className="mx-2 md:mx-4 lg:mx-6 xl:mx-10" >
           <Link className="text-sm font-medium hover:underline underline-offset-4" href="/login">
-            Get Started
+            Login
           </Link>
         </Button>
       </header>
@@ -115,6 +115,31 @@ export default async function LandingPage() {
             </div>
           </div>
         </section>
+        <section className="w-full py-10 md:py-20 lg:py-32" id="pricing">
+          <div className="container px-4 md:px-6">
+            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-4">Featured Courses</h2>
+            <p className="text-muted-foreground text-center mb-8 md:text-xl">Choose the perfect plan for your needs</p>
+            {/*TODO: Replace list with featured products */}
+            <ProductList products={products} />
+          </div>
+        </section>
+        <section className="w-full py-10 md:py-20 lg:py-32  bg-muted">
+          <div className="container px-4 md:px-6">
+            <div className="flex flex-col items-center justify-center space-y-4 text-center">
+              <div className="space-y-2">
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Start Your Journey Today</h2>
+                <p className="max-w-[600px] text-muted-foreground md:text-xl">
+                  Join thousands of satisfied customers and take your business to the next level.
+                </p>
+              </div>
+              <div className="w-full max-w-sm space-y-2">
+                <Link className="btn" href="#">
+                  <Button className=" p-7" >Get Started</Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
         <section className="w-full py-10 md:py-20 lg:py-32" id="testimonials">
           <div className="container px-4 md:px-6">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-4">What Our Customers Say</h2>
@@ -152,31 +177,6 @@ export default async function LandingPage() {
                   <p className="font-semibold">- Emily R., Operations Manager</p>
                 </CardContent>
               </Card>
-            </div>
-          </div>
-        </section>
-        <section className="w-full py-10 md:py-20 lg:py-32 bg-muted" id="pricing">
-          <div className="container px-4 md:px-6">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-4">Featured Courses</h2>
-            <p className="text-muted-foreground text-center mb-8 md:text-xl">Choose the perfect plan for your needs</p>
-            {/*TODO: Replace list with featured products */}
-            <ProductList products={products} />
-          </div>
-        </section>
-        <section className="w-full py-10 md:py-20 lg:py-32 ">
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center justify-center space-y-4 text-center">
-              <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Start Your Journey Today</h2>
-                <p className="max-w-[600px] text-muted-foreground md:text-xl">
-                  Join thousands of satisfied customers and take your business to the next level.
-                </p>
-              </div>
-              <div className="w-full max-w-sm space-y-2">
-                <Link className="btn" href="#">
-                  <Button className=" p-7" >Get Started</Button>
-                </Link>
-              </div>
             </div>
           </div>
         </section>
