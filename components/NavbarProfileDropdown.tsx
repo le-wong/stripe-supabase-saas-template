@@ -1,3 +1,5 @@
+"use client";
+
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -10,14 +12,10 @@ import { Bell, ReceiptText, User, Settings, HelpCircle, LogOut } from "lucide-re
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { } from "@supabase/supabase-js"
-import { createClient } from '@/utils/supabase/server'
 import { logout } from '@/app/auth/actions'
-import { generateStripeBillingPortalLink } from "@/utils/stripe/api"
 
-export default async function NavbarProfileDropdown() {
-    const supabase = await createClient()
-    const { data: { user }, error } = await supabase.auth.getUser()
-    const billingPortalURL = await generateStripeBillingPortalLink(user!.email!)
+export default function NavbarProfileDropdown() {
+
     return (
         <nav className="flex items-center">
             <Button variant="ghost" size="icon" className="mr-2">
@@ -46,7 +44,7 @@ export default async function NavbarProfileDropdown() {
                             <span>Settings</span>
                         </DropdownMenuItem>
                     </Link>
-                    <Link href={billingPortalURL}>
+                    <Link href="/billing">
                         <DropdownMenuItem>
                             <ReceiptText className="mr-2 h-4 w-4" />
                             <span>Billing</span>

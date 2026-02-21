@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from "next/navigation"
-import { db } from '@/utils/db/db'
-import { usersTable } from '@/utils/db/schema'
-import { eq } from "drizzle-orm";
+//import { db } from '@/utils/db/db'
+//import { usersTable } from '@/utils/db/schema'
+//import { eq } from "drizzle-orm";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -31,11 +31,11 @@ export default async function DashboardLayout({
     // (1) check user's course entitlements and
     // (2) report completion/progress per course and
     // (3) allow start/continue/review course results
-    const checkUserInDB = await db.select().from(usersTable).where(eq(usersTable.email, user!.email!))
-    if (checkUserInDB[0].plan === "none") {
-        console.log("User has no plan selected")
-        //return redirect('/subscribe')
-    }
+    //const checkUserInDB = await db.select().from(usersTable).where(eq(usersTable.email, user!.email!))
+    //if (checkUserInDB[0].plan === "none") {
+    //console.log("User has no plan selected")
+    //return redirect('/subscribe')
+    //}
 
 
     return (
