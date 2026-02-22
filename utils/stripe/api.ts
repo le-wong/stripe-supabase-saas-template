@@ -4,19 +4,21 @@ import { usersTable } from '../db/schema';
 import { eq } from "drizzle-orm";
 
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
-const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL || "http://localhost:3000"
+export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!) //authenticated server side connection to stripe 
+const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL || "http://localhost:3000" //if value on left is false, choose right
 
+/*
 export async function getStripePlan(email: string) {
-    //const user = await db.select().from(usersTable).where(eq(usersTable.email, email))
-    //const subscription = await stripe.subscriptions.retrieve(user[0].plan);
-    //const productId = subscription.items.data[0].plan.product as string
-    //const product = await stripe.products.retrieve(productId)
-    //return product.name
+    const user = await db.select().from(usersTable).where(eq(usersTable.email, email))
+    const subscription = await stripe.subscriptions.retrieve(user[0].plan);
+    const productId = subscription.items.data[0].plan.product as string
+    const product = await stripe.products.retrieve(productId)
+    return product.name
     return "Placeholder"
 }
+*/
 
-export async function createStripeCustomer(id: string, email: string, name?: string) {
+export async function createStripeCustomer(id: string, email: string, name?: string) {   //reviewed. 
     const customer = await stripe.customers.create({
         name: name ? name : "",
         email: email,
@@ -28,6 +30,7 @@ export async function createStripeCustomer(id: string, email: string, name?: str
     return customer.id
 }
 
+/*
 export async function createStripeCheckoutSession(email: string) {
     const user = await db.select().from(usersTable).where(eq(usersTable.email, email))
     const customerSession = await stripe.customerSessions.create({
@@ -40,6 +43,8 @@ export async function createStripeCheckoutSession(email: string) {
     });
     return customerSession.client_secret
 }
+*/
+
 
 export async function generateStripeBillingPortalLink(email: string) {
     const user = await db.select().from(usersTable).where(eq(usersTable.email, email))

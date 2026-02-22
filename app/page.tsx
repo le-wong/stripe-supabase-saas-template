@@ -5,7 +5,7 @@ import Link from "next/link"
 import { Star, Check, Coins, UserCheck, Database } from "lucide-react"
 import Stripe from 'stripe'
 import { ProductList } from "@/components/ProductList"
-import Navbar from "@/components/Navbar"
+
 
 // Types
 interface StripeProduct {
@@ -44,7 +44,6 @@ export default async function LandingPage() {
 
   return (
     <div className="flex flex-col min-h-[100dvh]">
-      <Navbar />
       <main className="flex-1">
         <section className="w-full py-20 lg:py-32 xl:py-40">
           <div className="container px-4 md:px-6 flex flex-col md:flex-row ">
