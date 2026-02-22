@@ -94,7 +94,6 @@ export async function signup(currentState: { message: string }, formData: FormDa
             name: data.name,
             email: signUpData.user.email!,
             stripe_id: stripeID,
-            plan: 'none'
         })
     } catch (err) {
         console.error("Error in signup:", err instanceof Error ? err.message : "Unknown error")
@@ -128,6 +127,7 @@ export async function loginUser(currentState: { message: string }, formData: For
 export async function logout() {
     const supabase = await createClient()
     const { error } = await supabase.auth.signOut()
+
     redirect('/')
 }
 
