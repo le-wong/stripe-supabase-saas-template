@@ -3,17 +3,14 @@ import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
 import Image from 'next/image'
-import { createClient } from '@/utils/supabase/server'
 import { Badge } from "@/components/ui/badge"
 import { Suspense } from "react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { CartButton } from "./Cart"
 import { AuthNav } from "./auth/AuthNavBar"
-import NavbarProfileDropdown from "./NavbarProfileDropdown"
+
 
 export default async function Navbar() {
-    //const supabase = await createClient()
-    //const { data: { user }, error } = await supabase.auth.getUser()
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -41,7 +38,8 @@ export default async function Navbar() {
                     <Menu className="h-5 w-5" />
                     <span className="sr-only">Toggle Menu</span>
                 </Button>
-                <AuthNav />
+                {<AuthNav />}
+
                 <CartButton />
             </div>
         </header >

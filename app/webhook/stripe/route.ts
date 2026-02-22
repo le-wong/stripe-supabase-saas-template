@@ -11,7 +11,7 @@ export async function POST(req: Request) {
             case 'customer.subscription.created':
                 console.log("Subscription created")
                 console.log("event:", event)
-                await db.update(usersTable).set({ plan: event.data.object.id }).where(eq(usersTable.stripe_id, event.data.object.customer));
+            //await db.update(usersTable).set({ plan: event.data.object.id }).where(eq(usersTable.stripe_id, event.data.object.customer));
             case 'customer.subscription.updated':
             case 'customer.subscription.deleted':
             default:

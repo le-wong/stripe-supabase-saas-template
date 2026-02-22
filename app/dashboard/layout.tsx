@@ -3,9 +3,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from "next/navigation"
-//import { db } from '@/utils/db/db'
-//import { usersTable } from '@/utils/db/schema'
-//import { eq } from "drizzle-orm";
 
 const inter = Inter({ subsets: ["latin"] });
 

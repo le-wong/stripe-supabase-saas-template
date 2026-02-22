@@ -1,14 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { useAuth } from "@/components/auth/AuthProvider";
+import type { User } from "@supabase/supabase-js";
 import { Button } from "../ui/button";
 import NavbarProfileDropdown from "../NavbarProfileDropdown";
+import { createClient } from "@/utils/supabase/client";
+import { useEffect, useState } from "react";
 
 export function AuthNav() {
-    const { user, loading } = useAuth();
 
-    if (loading) return null;
+    const supabase = createClient();
+    const [user, setUser] = useState<User | null>(null);
+    useEffect(() => {
+        async function fetchSession() {
+            const { data } = await supabase.auth.getSession();
+            setUser(data && data.session && data.session.user);
+        }
+        fetchSession();
+    }, []);
+
 
     return (
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
