@@ -66,6 +66,9 @@ export const ProductList = ({ products }: Props) => {
     }
 
     const filteredProducts = products.filter((product) => {
+        if (!product.active) {
+            return false;
+        }
         if (activeStateTokens.length === 0 && activePositionTokens.length === 0) { return true; }
 
         const stateTags = new Set(tokenizeWords(`${product.metadata["state"] ?? ""}`));
