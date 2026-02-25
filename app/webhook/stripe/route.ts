@@ -1,20 +1,23 @@
-// app/api/stripe/products/route.ts (example path)
+
+
+
+// app/api/stripe/products/route.ts (your current path)
 // ✅ Verifies Stripe webhook signature using RAW body
-// ✅ Returns proper 2xx / 4xx responses
-// ✅ Handles product.created / product.updated / product.deleted
+// ✅ Handles product.* and price.*
+// ✅ Upserts product + price into your DB
 
 import Stripe from "stripe";
-import { upsertProductFromStripe, setProductInactive } from "@/utils/db/products";
+import { upsertProductFromStripe, setProductInactive, } from "@/utils/db/products";
+import { upsertPriceFromStripe, setPriceInactive, } from "@/utils/db/prices";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: "2024-06-20", // if your project uses a different version, change it
+    apiVersion: "2024-06-20",
 });
 
 export async function POST(req: Request) {
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
     if (!webhookSecret) {
-        // Misconfigured environment
         return new Response("Missing STRIPE_WEBHOOK_SECRET", { status: 500 });
     }
     console.log("Stripe secret configured!");
@@ -24,7 +27,6 @@ export async function POST(req: Request) {
     }
     console.log("Stripe-Signature header received!");
 
-    // Stripe requires the RAW request body for signature verification
     const rawBody = await req.text();
 
     let event: Stripe.Event;
@@ -39,11 +41,14 @@ export async function POST(req: Request) {
     }
 
     try {
-        console.log(event.type);
+        console.log("Stripe event:", event.type);
+
         switch (event.type) {
+            // -------------------
+            // PRODUCTS
+            // -------------------
             case "product.created":
             case "product.updated": {
-
                 const product = event.data.object as Stripe.Product;
 
                 await upsertProductFromStripe({
@@ -58,15 +63,51 @@ export async function POST(req: Request) {
 
             case "product.deleted": {
                 const product = event.data.object as Stripe.Product;
-
-                // Mark inactive instead of deleting rows (safer)
                 await setProductInactive(product.id);
+                break;
+            }
+
+            // -------------------
+            // PRICES
+            // -------------------
+            case "price.created":
+            case "price.updated": {
+                const price = event.data.object as Stripe.Price;
+
+                // Stripe gives price.product as string (prod_...) or expanded object
+                const stripeProductId =
+                    typeof price.product === "string" ? price.product : price.product.id;
+
+                // Ensure product exists locally (in case price event arrives first)
+                const stripeProduct = await stripe.products.retrieve(stripeProductId);
+
+                await upsertProductFromStripe({
+                    id: stripeProduct.id,
+                    name: stripeProduct.name ?? "",
+                    description: stripeProduct.description ?? null,
+                    active: stripeProduct.active ?? true,
+                });
+
+                await upsertPriceFromStripe({
+                    stripePriceId: price.id,
+                    stripeProductId,
+                    active: price.active ?? true,
+                    currency: price.currency,
+                    unitAmount: price.unit_amount ?? null,
+                    type: price.type, // "one_time" | "recurring"
+                });
 
                 break;
             }
 
+            case "price.deleted": {
+                const price = event.data.object as Stripe.Price;
+                await setPriceInactive(price.id);
+                break;
+            }
+
             default: {
-                console.log("Unhandled Stripe event!");
+                console.log("Unhandled Stripe event:", event.type);
                 break;
             }
         }
@@ -77,40 +118,3 @@ export async function POST(req: Request) {
         return new Response(`Webhook handler error: ${message}`, { status: 500 });
     }
 }
-
-
-
-
-
-
-/*
-
-export async function POST(req: Request) { //handles HTTP POST requests sent to this route 
-    try {
-        const event = await req.json() //converts json text to javascript object 
-
-
-        switch (event.type) {   //determines which stripe event occured  
-            case 'customer.subscription.created':
-                console.log("event:", event)
-                //await db.update(usersTable).set({ plan: event.data.object.id }).where(eq(usersTable.stripe_id, event.data.object.customer))
-                break;
-            // Update usersTable.plan with the Stripe subscription ID   where usersTable.stripe_id matches the Stripe customer ID
-
-            case 'customer.subscription.updated':
-                break;
-            case 'customer.subscription.deleted':
-                break;
-            default:
-                console.log(`Unhandled event type ${event.type}`);
-        }
-
-        return new Response('Success', { status: 200 })
-    } catch (err) {
-        return new Response(`Webhook error: ${err instanceof Error ? err.message : "Unknown error"}`, {
-            status: 400,
-        })
-    }
-}
-
-*/
