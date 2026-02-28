@@ -6,17 +6,25 @@ import { Button } from "../ui/button";
 import NavbarProfileDropdown from "../NavbarProfileDropdown";
 import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
-
+import { useRouter } from "next/navigation";
 export function AuthNav() {
 
     const supabase = createClient();
+    const router = useRouter();
     const [user, setUser] = useState<User | null>(null);
     useEffect(() => {
-        async function fetchSession() {
-            const { data } = await supabase.auth.getSession();
-            setUser(data && data.session && data.session.user);
-        }
-        fetchSession();
+        const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+            // Handle auth state changes
+            console.log(session);
+            setUser(session && session.user);
+            router.refresh();
+        });
+
+        // Unsubscribe when component unmounts
+        return () => {
+            authListener.subscription.unsubscribe();
+        };
+
     }, []);
 
 
@@ -26,11 +34,13 @@ export function AuthNav() {
                 My Courses
             </Link>}
             {user ? <NavbarProfileDropdown /> :
-                <Button className="mx-2 md:mx-4 lg:mx-6 xl:mx-10" >
-                    <Link className="text-sm font-medium hover:underline underline-offset-4" href="/login">
+
+                <Link className="text-sm font-medium hover:underline underline-offset-4" href="/login">
+                    <Button className="mx-2 md:mx-4 lg:mx-6 xl:mx-10" >
                         Login
-                    </Link>
-                </Button>
+                    </Button>
+                </Link>
+
             }
         </div >
     )
