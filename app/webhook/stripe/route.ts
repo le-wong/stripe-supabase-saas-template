@@ -9,6 +9,7 @@
 import Stripe from "stripe";
 import { upsertProductFromStripe, setProductInactive, } from "@/utils/db/products";
 import { upsertPriceFromStripe, setPriceInactive, } from "@/utils/db/prices";
+import { grantUserEntitlement, revokeUserEntitlement } from "@/utils/db/entitlements";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: "2024-06-20",
@@ -103,6 +104,17 @@ export async function POST(req: Request) {
             case "price.deleted": {
                 const price = event.data.object as Stripe.Price;
                 await setPriceInactive(price.id);
+                break;
+            }
+            case "checkout.session.completed": {
+                const session = event.data.object as Stripe.Checkout.Session;
+                if (session.customer) {
+                    const products: Stripe.ApiList<Stripe.LineItem> = await stripe.checkout.sessions.listLineItems(session.id);
+                    for (const product of products.data) {
+                        await grantUserEntitlement(session.customer.toString(), product.id, session.id);
+                    }
+                }
+                //TODO: handle if customer is null??
                 break;
             }
 
