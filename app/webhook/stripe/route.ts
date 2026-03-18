@@ -108,10 +108,18 @@ export async function POST(req: Request) {
             }
             case "checkout.session.completed": {
                 const session = event.data.object as Stripe.Checkout.Session;
+                const mySession = await stripe.checkout.sessions.retrieve(session.id, {
+                    expand: ['line_items.data.price.product']
+                });
+                //console.log(mySession);
+                const products = mySession.line_items?.data ?? []
+                //if (session.customer_details?.email) {
                 if (session.customer) {
-                    const products: Stripe.ApiList<Stripe.LineItem> = await stripe.checkout.sessions.listLineItems(session.id);
-                    for (const product of products.data) {
-                        await grantUserEntitlement(session.customer.toString(), product.id, session.id);
+                    for (const product of products) {
+                        const productId = product.price?.product as Stripe.Product
+                        //console.log(productId)
+                        //await grantUserEntitlement(session.customer_details.email.toString(), productId.id, session.id);
+                        await grantUserEntitlement(session.customer.toString(), productId.id, session.id);
                     }
                 }
                 //TODO: handle if customer is null??

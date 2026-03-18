@@ -1,4 +1,4 @@
-import { integer, uuid, boolean, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
+import { integer, uuid, boolean, pgTable, text, timestamp, unique } from 'drizzle-orm/pg-core';
 
 export const usersTable = pgTable('users_table', {  // users_table
     id: text('id').primaryKey(),
@@ -43,7 +43,14 @@ export const entitlementsTable = pgTable('entitlements', {
     orderId: text("order_id").notNull(),
     active: boolean('active').notNull().default(false),
     created_at: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-});
+},
+    (table) => ({
+        userCourseUnique: unique("entitlements_user_course_unique").on(
+            table.userId,
+            table.courseId
+        ),
+    })
+);
 
 export const enrollmentsTable = pgTable('enrollments', {
     id: uuid('id').defaultRandom().primaryKey(),

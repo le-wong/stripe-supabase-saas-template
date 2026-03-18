@@ -4,8 +4,22 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCartStore } from "../store/cart-store";
 import { checkoutAction } from "./checkout-action";
+import type { User } from "@supabase/supabase-js";
+import { createClient } from "@/utils/supabase/client";
+import { useState, useEffect } from "react";
+
 
 export default function CheckoutPage() {
+    const supabase = createClient();
+    const [user, setUser] = useState<User | null>(null);
+    useEffect(() => {
+        async function fetchSession() {
+            const { data } = await supabase.auth.getSession();
+            setUser(data && data.session && data.session.user);
+        }
+        fetchSession();
+    }, []);
+
     const { items, removeItem, addItem } = useCartStore();
     const total = items.reduce(
         (acc, item) => acc + item.price * item.quantity,
@@ -64,6 +78,7 @@ export default function CheckoutPage() {
             </Card>
             <form action={checkoutAction} className="max-w-md mx-auto">
                 <input type="hidden" name="items" value={JSON.stringify(items)} />
+                <input type="hidden" name="user" value={user?.id ?? ""} />
                 <Button type="submit" variant="default" className="w-full">
                     Proceed to Payment
                 </Button>

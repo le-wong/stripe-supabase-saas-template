@@ -22,7 +22,7 @@ export function AuthNav() {
 
     return (
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-            {user && <Link className="transition-colors hover:text-foreground/80 text-foreground/60" href="#">
+            {user && <Link className="transition-colors hover:text-foreground/80 text-foreground/60" href="/dashboard">
                 My Courses
             </Link>}
             {user ? <NavbarProfileDropdown /> :
