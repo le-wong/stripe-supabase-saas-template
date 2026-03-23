@@ -15,7 +15,7 @@ export const productsTable = pgTable('products', {
     description: text("description"),
     active: boolean('active').notNull().default(true),
     stripeProductId: text("stripe_product_id").unique(),
-    courseMaterial: text("course_material"),
+    //courseMaterial: text("course_material"),
     created_at: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
@@ -65,8 +65,14 @@ export const enrollmentsTable = pgTable('enrollments', {
     correctAnswers: integer('correct_answers').default(0),
     startedAt: timestamp('started_at', { withTimezone: true }).defaultNow().notNull(),
     completedAt: timestamp('completed_at', { withTimezone: true }),
-
-});
+},
+    (table) => ({
+        userCourseUnique: unique("enrollments_user_course_unique").on(
+            table.userId,
+            table.courseId
+        ),
+    })
+);
 
 export const questionsTable = pgTable('questions', {
     id: uuid('id').defaultRandom().primaryKey(),

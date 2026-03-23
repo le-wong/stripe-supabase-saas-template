@@ -39,5 +39,8 @@ export async function revokeUserEntitlement(userId: string, productId: string) {
 }
 
 export async function getUserEntitlements(userId: string) {
-    return db.select().from(entitlementsTable).where(eq(entitlementsTable.userId, userId));
+    return db.select()
+        .from(entitlementsTable)
+        .leftJoin(productsTable, eq(entitlementsTable.courseId, productsTable.id))
+        .where(eq(entitlementsTable.userId, userId));
 }

@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from "next/navigation"
-import { getUserInfo } from "@/utils/db/users";
+import { dbGetUserInfo } from "@/utils/db/users";
 
 
 const inter = Inter({ subsets: ["latin"] });

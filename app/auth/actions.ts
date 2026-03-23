@@ -93,6 +93,7 @@ export async function signup(currentState: { message: string }, formData: FormDa
             id: signUpData.user.id,
             name: data.name,
             email: signUpData.user.email!,
+            phone: '0000000000', //todo: add to signup form
             stripe_id: stripeID,
         })
     } catch (err) {
