@@ -2,7 +2,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 import { CourseCard } from '@/components/CourseCard'
-import { getEnrollments, enroll, getEntitlements, withdraw, getUserInfo } from './actions'
+import { getEnrollments, enroll, getEntitlements, withdraw, getUserInfo, launchCourse } from './actions'
 import { Course, CourseStatus } from "@/utils/types";
 
 export default async function Dashboard() {
@@ -19,26 +19,42 @@ export default async function Dashboard() {
     const userCourses = (await getEntitlements(userId))
     //console.log(userCourses)
     const userProgress = (await getEnrollments(userId))
+
+    //TODO: sort courses by progress somehow
     const courses = new Map<string, Course>;
     for (const course of userProgress) {
-        if (course.products?.id) {
-            courses.set(course.products.id, {
-                courseId: course.products.id,
-                courseName: course.products.name,
+        if (course.courses?.id) {
+            courses.set(course.courses.id, {
+                courseId: course.courses.id,
+                courseName: course.courses.name,
+                stateTags: course.courses.stateTags ?? "",
+                roleTags: course.courses.roleTags ?? "",
                 userId: userId,
                 status: course.enrollments.status as CourseStatus,
-                description: course.products.description as string
+                description: course.courses.description as string,
+                progress: {
+                    questionsAnswered: course.enrollments.questionsAnswered ?? 0,
+                    questionsCorrect: course.enrollments.correctAnswers ?? 0,
+                    startedAt: course.enrollments.startedAt
+                }
             })
         }
     }
     for (const course of userCourses) {
-        if (course.products?.id && !courses.has(course.products.id)) {
-            courses.set(course.products.id, {
-                courseId: course.products.id,
-                courseName: course.products.name,
+        if (course.courses?.id && !courses.has(course.courses.id)) {
+            courses.set(course.courses.id, {
+                courseId: course.courses.id,
+                courseName: course.courses.name,
+                stateTags: course.courses.stateTags ?? "",
+                roleTags: course.courses.roleTags ?? "",
                 userId: userId,
                 status: CourseStatus.NotStarted,
-                description: course.products.description as string
+                description: course.courses.description as string,
+                progress: {
+                    questionsAnswered: 0,
+                    questionsCorrect: 0,
+                    startedAt: new Date()
+                }
             })
         }
     }
@@ -57,7 +73,10 @@ export default async function Dashboard() {
                                 myCourse={course}
                                 formAction={((course.status === CourseStatus.NotStarted || course.status === CourseStatus.Inactive) && enroll)
                                     || (course.status === CourseStatus.Active && withdraw)
-                                }></CourseCard>
+                                }
+                                launchAction={launchCourse}
+                            >
+                            </CourseCard>
                         </li>
                     ))
                     }

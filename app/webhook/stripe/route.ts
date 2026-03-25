@@ -7,7 +7,7 @@
 // ✅ Upserts product + price into your DB
 
 import Stripe from "stripe";
-import { upsertProductFromStripe, setProductInactive, } from "@/utils/db/products";
+import { upsertProductFromStripe, setProductInactive, } from "@/utils/db/courses";
 import { upsertPriceFromStripe, setPriceInactive, } from "@/utils/db/prices";
 import { grantUserEntitlement, revokeUserEntitlement } from "@/utils/db/entitlements";
 
@@ -51,12 +51,24 @@ export async function POST(req: Request) {
             case "product.created":
             case "product.updated": {
                 const product = event.data.object as Stripe.Product;
+                let stateMetadata = "";
+                let roleMetadata = "";
+                for (const key in product.metadata) {
+                    if (key.toLowerCase().startsWith("state")) {
+                        stateMetadata = stateMetadata.concat(product.metadata[key]);
+                    }
+                    else if (key.toLowerCase().startsWith("position")) {
+                        roleMetadata = roleMetadata.concat(product.metadata[key]);
+                    }
+                }
 
                 await upsertProductFromStripe({
                     id: product.id,
                     name: product.name ?? "",
                     description: product.description ?? null,
                     active: product.active ?? true,
+                    stateTags: stateMetadata.toLowerCase(),
+                    roleTags: roleMetadata.toLowerCase()
                 });
 
                 break;

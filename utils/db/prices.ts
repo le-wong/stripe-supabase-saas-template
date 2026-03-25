@@ -1,6 +1,6 @@
 // utils/db/prices.ts
 import { db } from "@/utils/db/db";
-import { productsTable, pricesTable } from "@/utils/db/schema";
+import { coursesTable, pricesTable } from "@/utils/db/schema";
 import { eq } from "drizzle-orm";
 
 type UpsertPriceInput = {
@@ -15,9 +15,9 @@ type UpsertPriceInput = {
 export async function upsertPriceFromStripe(input: UpsertPriceInput) {
     // Find local product UUID using stripe product id
     const products = await db
-        .select({ id: productsTable.id })
-        .from(productsTable)
-        .where(eq(productsTable.stripeProductId, input.stripeProductId));
+        .select({ id: coursesTable.id })
+        .from(coursesTable)
+        .where(eq(coursesTable.stripeProductId, input.stripeProductId));
 
     const product = products[0];
     if (!product) {

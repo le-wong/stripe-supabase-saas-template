@@ -1,32 +1,32 @@
 import { db } from "@/utils/db/db";
-import { enrollmentsTable, productsTable, entitlementsTable } from "@/utils/db/schema";
-import { eq, and, not, or } from "drizzle-orm";
+import { enrollmentsTable, coursesTable, entitlementsTable } from "@/utils/db/schema";
+import { eq, and, not, or, sql } from "drizzle-orm";
 import { CourseStatus } from "../types";
 
 
 export async function dbGetAllEnrollmentsForUser(userId: string) {
     return db.select()
         .from(enrollmentsTable)
-        .leftJoin(productsTable, eq(enrollmentsTable.courseId, productsTable.id))
+        .leftJoin(coursesTable, eq(enrollmentsTable.courseId, coursesTable.id))
         .where(eq(enrollmentsTable.userId, userId));
 }
 
 export async function getUnstartedEnrollmentsForUser(userId: string) {
     return db.select()
         .from(enrollmentsTable)
-        .leftJoin(productsTable, eq(enrollmentsTable.courseId, productsTable.id))
+        .leftJoin(coursesTable, eq(enrollmentsTable.courseId, coursesTable.id))
         .where(
             and(
                 eq(enrollmentsTable.userId, userId),
                 or(
                     eq(enrollmentsTable.status, CourseStatus.Inactive),
-                    not(eq(entitlementsTable.courseId, productsTable.id))
+                    not(eq(entitlementsTable.courseId, coursesTable.id))
                 )
             )
         );
 }
 
-export async function enrollInCourse(userId: string, courseId: string) {
+export async function dbEnrollInCourse(userId: string, courseId: string) {
 
     return db.insert(enrollmentsTable)
         .values({
@@ -42,11 +42,12 @@ export async function enrollInCourse(userId: string, courseId: string) {
                 questionsAnswered: 0,
                 correctAnswers: 0,
                 status: CourseStatus.Active,
+                startedAt: sql`now()`
             },
         }).returning();
 }
 
-export async function withdrawFromCourse(userId: string, courseId: string) {
+export async function dbWithdrawFromCourse(userId: string, courseId: string) {
     return db.update(enrollmentsTable)
         .set({ status: CourseStatus.Inactive })
         .where(

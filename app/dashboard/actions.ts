@@ -1,6 +1,6 @@
 "use server"
 import { dbGetUserInfo } from '@/utils/db/users'
-import { dbGetAllEnrollmentsForUser, withdrawFromCourse, enrollInCourse } from '@/utils/db/enrollments'
+import { dbGetAllEnrollmentsForUser, dbWithdrawFromCourse, dbEnrollInCourse } from '@/utils/db/enrollments'
 import { getUserEntitlements } from '@/utils/db/entitlements'
 import { redirect } from "next/navigation"
 import { revalidatePath } from 'next/cache'
@@ -17,7 +17,7 @@ export async function enroll(currentState: { message: string }, formData: FormDa
     const userId = formData.get("user") as string;
     const courseId = formData.get("course") as string;
 
-    await enrollInCourse(userId, courseId);
+    await dbEnrollInCourse(userId, courseId);
 
     revalidatePath('/', 'layout')
     redirect('/dashboard')
@@ -31,8 +31,12 @@ export async function withdraw(currentState: { message: string }, formData: Form
     const userId = formData.get("user") as string;
     const courseId = formData.get("course") as string;
 
-    await withdrawFromCourse(userId, courseId);
+    await dbWithdrawFromCourse(userId, courseId);
 
     revalidatePath('/', 'layout')
     redirect('/dashboard')
+}
+
+export async function launchCourse(courseId: string, userId: string) {
+    return ({ message: "Launched course" })
 }
