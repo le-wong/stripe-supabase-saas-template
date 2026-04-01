@@ -7,10 +7,13 @@ import { Badge } from "@/components/ui/badge"
 import { Suspense } from "react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { CartButton } from "./Cart"
+import { createClient } from "@/utils/supabase/server"
 import { AuthNav } from "./auth/AuthNavBar"
 
 
 export default async function Navbar() {
+    const supabase = await createClient();
+    const { data } = await supabase.auth.getUser();
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -23,14 +26,8 @@ export default async function Navbar() {
                         <Link className="transition-colors hover:text-foreground/80 text-foreground" href="/">
                             Home
                         </Link>
-                        <Link className="transition-colors hover:text-foreground/80 text-foreground/60" href="#">
-                            Tasks
-                        </Link>
-                        <Link className="transition-colors hover:text-foreground/80 text-foreground/60" href="#">
-                            Reports
-                        </Link>
-                        <Link className="transition-colors hover:text-foreground/80 text-foreground/60" href="/products">
-                            All Courses
+                        <Link className="transition-colors hover:text-foreground/80 text-foreground" href="/products">
+                            Course Catalog
                         </Link>
                     </nav>
                 </div>
@@ -38,8 +35,7 @@ export default async function Navbar() {
                     <Menu className="h-5 w-5" />
                     <span className="sr-only">Toggle Menu</span>
                 </Button>
-                {<AuthNav />}
-
+                <AuthNav user={data.user}></AuthNav>
                 <CartButton />
             </div>
         </header >

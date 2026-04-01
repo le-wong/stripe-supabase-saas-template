@@ -2,7 +2,7 @@
 //this file is the logic of what to do wwith database 
 
 import { db } from "@/utils/db/db";
-import { productsTable } from "@/utils/db/schema";
+import { coursesTable } from "@/utils/db/schema";
 import { eq } from "drizzle-orm";
 
 export async function upsertProductFromStripe(product: {
@@ -10,28 +10,34 @@ export async function upsertProductFromStripe(product: {
     name: string;
     description: string | null;
     active: boolean;
+    stateTags: string | null;
+    roleTags: string | null;
 }) {
     return db
-        .insert(productsTable)
+        .insert(coursesTable)
         .values({
             stripeProductId: product.id,
             name: product.name,
             description: product.description,
             active: product.active,
+            stateTags: product.stateTags,
+            roleTags: product.roleTags
         })
         .onConflictDoUpdate({
-            target: productsTable.stripeProductId,
+            target: coursesTable.stripeProductId,
             set: {
                 name: product.name,
                 description: product.description,
                 active: product.active,
+                stateTags: product.stateTags,
+                roleTags: product.roleTags
             },
         });
 }
 
 export async function setProductInactive(stripeProductId: string) {
     return db
-        .update(productsTable)
+        .update(coursesTable)
         .set({ active: false })
-        .where(eq(productsTable.stripeProductId, stripeProductId));
+        .where(eq(coursesTable.stripeProductId, stripeProductId));
 }

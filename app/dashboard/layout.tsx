@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from "next/navigation"
+import { dbGetUserInfo } from "@/utils/db/users";
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -33,11 +35,10 @@ export default async function DashboardLayout({
     //console.log("User has no plan selected")
     //return redirect('/subscribe')
     //}
-
+    //const userInDB = await getUserInfo(user?.id)
 
     return (
         < div >
-
             {children}
         </div >
     );

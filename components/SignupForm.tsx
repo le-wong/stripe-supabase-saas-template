@@ -43,6 +43,7 @@ export default function SignupForm() {
                     type="password"
                     name="password"
                     required
+                    minLength={6}
                 />
             </div>
             <Button className="w-full mt-4" type="submit" aria-disabled={pending}>  {pending ? 'Submitting...' : 'Sign up'}</Button>

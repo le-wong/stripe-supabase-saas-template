@@ -24,6 +24,17 @@ export const ProductCard = ({ product }: Props) => {
             quantity: 1,
         })
     }
+
+    let stateMetadata: String[] = [];
+    let roleMetadata: String[] = [];;
+    for (const key in product.metadata) {
+        if (key.toLowerCase().startsWith("state")) {
+            stateMetadata = product.metadata[key].split(" ");
+        }
+        else if (key.toLowerCase().startsWith("position")) {
+            roleMetadata = product.metadata[key].split(" ");
+        }
+    }
     return (
         <Card className="group hover:shadow-2xl transition duration-300 py-0 h-full flex flex-col border-gray-300 gap-0">
             {product.images && product.images[0] && (
@@ -39,10 +50,29 @@ export const ProductCard = ({ product }: Props) => {
                         }} />
                 </div>
             )}
-            <CardHeader className="p-4">
-                <CardTitle className="text-xl font-bold text-gray-800">
+            <CardHeader className="p-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2">
+                <CardTitle className="text-xl font-bold">
                     {product.name}
                 </CardTitle>
+                <span className="justify-end grid grid-flow-col gap-1 align-top ">
+                    {stateMetadata.map((tag) => (
+                        <Button
+                            key={tag.toString()}
+                            className="rounded-full border px-3 py-1 text-sm bg-sky-600 text-white border-sky-600 -my-3"
+                        >
+                            {tag.toUpperCase()}
+                        </Button>
+                    ))}
+                    {roleMetadata.map((tag) => (
+                        <Button
+                            key={tag.toString()}
+                            className="rounded-full border px-3 py-1 text-sm transition bg-lime-600 text-white border-lime-600 -my-3"
+                        >
+                            {tag.charAt(0).toUpperCase() + tag.slice(1)}
+                        </Button>
+                    ))}
+                </span>
+
             </CardHeader>
             <CardContent className="p-4 flex-grow flex flex-col justify-between">
                 {product.description && (
