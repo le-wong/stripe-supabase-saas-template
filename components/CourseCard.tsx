@@ -28,14 +28,14 @@ export const CourseCard = (props: CourseProps) => {
                 <span className="justify-end grid grid-flow-col gap-2 align-top ">
                     {props.myCourse.stateTags.length > 0 &&
                         <Button
-                            className="rounded-full border px-3 py-1 text-sm bg-blue-600 text-white border-blue-600 -my-3"
+                            className="rounded-full border px-3 py-1 text-sm bg-sky-600 text-white border-sky-600 -my-3"
                         >
                             {props.myCourse.stateTags.toUpperCase()}
                         </Button>
                     }
                     {props.myCourse.roleTags.length > 0 &&
                         <Button
-                            className="rounded-full border px-3 py-1 text-sm transition bg-green-600 text-white border-green-600 -my-3"
+                            className="rounded-full border px-3 py-1 text-sm transition bg-lime-600 text-white border-lime-600 -my-3"
                         >
                             {props.myCourse.roleTags.charAt(0).toUpperCase() + props.myCourse.roleTags.slice(1)}
                         </Button>

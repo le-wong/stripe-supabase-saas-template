@@ -83,41 +83,44 @@ export async function POST(req: Request) {
             // -------------------
             // PRICES
             // -------------------
-            case "price.created":
-            case "price.updated": {
-                const price = event.data.object as Stripe.Price;
+            //case "price.created":
+            //case "price.updated":
+            /* {
+            const price = event.data.object as Stripe.Price;
 
-                // Stripe gives price.product as string (prod_...) or expanded object
-                const stripeProductId =
-                    typeof price.product === "string" ? price.product : price.product.id;
+            // Stripe gives price.product as string (prod_...) or expanded object
+            const stripeProductId =
+                typeof price.product === "string" ? price.product : price.product.id;
 
-                // Ensure product exists locally (in case price event arrives first)
-                const stripeProduct = await stripe.products.retrieve(stripeProductId);
+            // Ensure product exists locally (in case price event arrives first)
+            const stripeProduct = await stripe.products.retrieve(stripeProductId);
 
-                await upsertProductFromStripe({
-                    id: stripeProduct.id,
-                    name: stripeProduct.name ?? "",
-                    description: stripeProduct.description ?? null,
-                    active: stripeProduct.active ?? true,
-                });
+            await upsertProductFromStripe({
+                id: stripeProduct.id,
+                name: stripeProduct.name ?? "",
+                description: stripeProduct.description ?? null,
+                active: stripeProduct.active ?? true,
+            });
 
-                await upsertPriceFromStripe({
-                    stripePriceId: price.id,
-                    stripeProductId,
-                    active: price.active ?? true,
-                    currency: price.currency,
-                    unitAmount: price.unit_amount ?? null,
-                    type: price.type, // "one_time" | "recurring"
-                });
+            await upsertPriceFromStripe({
+                stripePriceId: price.id,
+                stripeProductId,
+                active: price.active ?? true,
+                currency: price.currency,
+                unitAmount: price.unit_amount ?? null,
+                type: price.type, // "one_time" | "recurring"
+            });
 
-                break;
+            break;
             }
-
-            case "price.deleted": {
+            */
+            //case "price.deleted": 
+            /*{
                 const price = event.data.object as Stripe.Price;
                 await setPriceInactive(price.id);
                 break;
             }
+                */
             case "checkout.session.completed": {
                 const session = event.data.object as Stripe.Checkout.Session;
                 const mySession = await stripe.checkout.sessions.retrieve(session.id, {

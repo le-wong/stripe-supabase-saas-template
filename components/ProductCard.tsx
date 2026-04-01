@@ -32,7 +32,7 @@ export const ProductCard = ({ product }: Props) => {
             stateMetadata = product.metadata[key].split(" ");
         }
         else if (key.toLowerCase().startsWith("position")) {
-            roleMetadata.push(product.metadata[key]);
+            roleMetadata = product.metadata[key].split(" ");
         }
     }
     return (
@@ -54,7 +54,7 @@ export const ProductCard = ({ product }: Props) => {
                 <CardTitle className="text-xl font-bold">
                     {product.name}
                 </CardTitle>
-                <span className="justify-end grid grid-flow-col gap-2 align-top ">
+                <span className="justify-end grid grid-flow-col gap-1 align-top ">
                     {stateMetadata.map((tag) => (
                         <Button
                             key={tag.toString()}

@@ -39,7 +39,6 @@ export default async function DashboardLayout({
 
     return (
         < div >
-
             {children}
         </div >
     );

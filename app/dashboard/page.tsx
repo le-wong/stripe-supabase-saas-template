@@ -4,6 +4,8 @@ import { createClient } from '@/utils/supabase/server'
 import { CourseCard } from '@/components/CourseCard'
 import { getEnrollments, enroll, getEntitlements, withdraw, getUserInfo, launchCourse } from './actions'
 import { Course, CourseStatus } from "@/utils/types";
+import { Banner } from '@/components/ui/banner'
+import Link from "next/link"
 
 export default async function Dashboard() {
     const supabase = await createClient()
@@ -12,7 +14,7 @@ export default async function Dashboard() {
     if (error || !data?.user) {
         redirect('/login')
     }
-
+    //console.log(data.user)
     const userId = data.user.id;
     const userName = (await getUserInfo(userId)).at(0)?.name
 
@@ -61,6 +63,13 @@ export default async function Dashboard() {
     //const userInfo = (await getUserInfo('41c31059-291a-490c-adaa-5d567316c358')).at(0)
     return (
         <main className="flex-1">
+            {!data.user.phone &&
+                <Banner id="add-phone-banner">
+                    <span className="text-center">
+                        <Link href="#">Add your phone number</Link> to enable SMS-based learning!
+                    </span>
+                </Banner>
+            }
             <div className="container">
                 Hello {userName}
             </div>

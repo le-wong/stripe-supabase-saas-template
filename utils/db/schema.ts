@@ -4,21 +4,20 @@ export const usersTable = pgTable('users_table', {  // users_table
     id: text('id').primaryKey(),
     name: text('name').notNull(),
     email: text('email').notNull().unique(),
-    phone: text('phone').notNull().unique(),
+    phone: text('phone'),
     stripe_id: text('stripe_id').notNull(),
-    created_at: timestamp('created_at'),
+    created_at: timestamp('created_at').defaultNow(),
 });
 
-//TODO: rename to courses
 export const coursesTable = pgTable('courses', {
     id: uuid('id').defaultRandom().primaryKey(),
     name: text('name').notNull(),
     description: text("description"),
     active: boolean('active').notNull().default(true),
     stripeProductId: text("stripe_product_id").unique(),
-    //courseMaterial: text("course_material"),
-    //totalQuestions: integer("total_questions").notNull().default(100), //for safety checking, compare with number of questions in questionsTable
-    //ceuValue: integer("ceu_value").notNull().default(8), //TODO: set sane default
+    courseMaterial: text("course_material"),
+    totalQuestions: integer("total_questions").notNull().default(100), //for safety checking, compare with number of questions in questionsTable
+    ceuValue: integer("ceu_value").notNull().default(8), //TODO: set sane default
     stateTags: text("state_tags"), //metadata from stripe product
     roleTags: text("role_tags"), //metadata from stripe product
     created_at: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
