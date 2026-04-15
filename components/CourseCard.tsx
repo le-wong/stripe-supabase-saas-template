@@ -4,6 +4,7 @@ import { Button } from "./ui/button"
 import { useActionState } from "react";
 import { Course, CourseStatus, CourseProgress } from "@/utils/types";
 
+
 interface CourseProps {
     myCourse: Course,
     formAction: any,
@@ -63,6 +64,8 @@ export const CourseCard = (props: CourseProps) => {
                         )}
                     </form>
                     <form action={launchAction}>
+                        <input type="hidden" name="course" value={props.myCourse.courseId} />
+                        <input type="hidden" name="name" value={props.myCourse.courseName} />
                         {props.myCourse.status === CourseStatus.Active && <Button type="submit" variant="default" className="w-full">
                             Launch Course
                         </Button>}

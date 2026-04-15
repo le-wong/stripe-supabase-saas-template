@@ -52,13 +52,29 @@ export async function updateSession(request: NextRequest) {
         url.pathname = '/login'
         return NextResponse.redirect(url)
     }
-    // // If user is logged in, redirect to dashboard
-    /*if (user && request.nextUrl.pathname === '/') {
-        console.log('sneaky redirect')
-        url.pathname = '/dashboard'
-        return NextResponse.redirect(url)
+    //If user is logged in and attempting to launch a course, try to get the course info and pass it to the server component
+    if (user && request.nextUrl.pathname.startsWith('/course')) {
+        const searchParams = request.nextUrl.searchParams;
+        const id = searchParams.get('id');
+
+        const requestHeaders = new Headers(request.headers);
+
+        if (id) {
+            const query = { id: id }
+            requestHeaders.set('x-query', JSON.stringify(query));
+        }
+
+        const myNewResponse = NextResponse.next({
+            request: {
+                headers: requestHeaders
+            }
+        });
+        const cookiesToSet = supabaseResponse.cookies.getAll();
+        cookiesToSet.forEach(({ name, value, options }) =>
+            myNewResponse.cookies.set(name, value, options)
+        )
+        return myNewResponse
     }
-        */
     // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
     // creating a new response object with NextResponse.next() make sure to:
     // 1. Pass the request in it, like so:

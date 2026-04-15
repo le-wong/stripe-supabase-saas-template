@@ -21,3 +21,17 @@ export interface CourseProgress {
     questionsCorrect: number,
     startedAt: Date
 }
+
+export interface Question {
+    id: string,
+    number: number,
+    text: string,
+    choices: QuestionChoice[],
+}
+
+export interface QuestionChoice {
+    id: string,
+    choiceNumber: number,
+    choiceText: string,
+    userChose: boolean
+}
