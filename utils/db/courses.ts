@@ -156,10 +156,8 @@ export async function dbGradeCourse(courseId: string, userId: string) {
         .leftJoin(questionChoicesTable, eq(questionChoicesTable.id, courseAttemptsTable.questionId))
         .where(
             and(
-                and(
-                    eq(courseAttemptsTable.userId, userId),
-                    eq(courseAttemptsTable.courseId, courseId)
-                ),
+                eq(courseAttemptsTable.userId, userId),
+                eq(courseAttemptsTable.courseId, courseId),
                 eq(questionChoicesTable.isCorrect, true)
             )
         )

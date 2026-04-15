@@ -19,13 +19,14 @@ export default function CourseBlock(props: CourseProps) {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(props.startIndex);
 
     let startingOption = null;
+
     for (const choice of questions[currentQuestionIndex].choices) {
         if (choice.userChose) {
             startingOption = choice.choiceNumber;
             break;
         }
     }
-    console.log(startingOption)
+    //console.log(startingOption)
 
     const [selectedOption, setSelectedOption] = useState(startingOption);
     const [checkSubmit, setCheckSubmit] = useState(false);
@@ -43,13 +44,13 @@ export default function CourseBlock(props: CourseProps) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
             setSelectedOption(() => {
                 let startingOption = null;
-                for (const choice of questions[currentQuestionIndex].choices) {
+                for (const choice of questions[currentQuestionIndex + 1].choices) {
                     if (choice.userChose) {
                         startingOption = choice.choiceNumber;
                         break;
                     }
                 }
-                console.log(startingOption)
+                //console.log(startingOption)
                 return startingOption
             })
             if (checkSubmit) {
@@ -72,13 +73,14 @@ export default function CourseBlock(props: CourseProps) {
             setCurrentQuestionIndex(currentQuestionIndex - 1);
             setSelectedOption(() => {
                 let startingOption = null;
-                for (const choice of questions[currentQuestionIndex].choices) {
+                console.log(questions[currentQuestionIndex - 1])
+                for (const choice of questions[currentQuestionIndex - 1].choices) {
                     if (choice.userChose) {
                         startingOption = choice.choiceNumber;
                         break;
                     }
                 }
-                console.log(startingOption)
+                //console.log(startingOption)
                 return startingOption
             })
         }

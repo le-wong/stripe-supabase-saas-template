@@ -27,7 +27,7 @@ export async function getUnansweredQuestions(courseId: string, userId: string) {
 
 export async function getAnsweredQuestions(courseId: string, userId: string) {
     const answeredQuestions = await dbGetAnsweredCourseQuestions(courseId, userId);
-    console.log(answeredQuestions)
+    //console.log(answeredQuestions)
     let myMap: Map<string, string> = new Map();
     for (const question of answeredQuestions) {
         myMap.set(question.questionId, question.answerId ?? "")

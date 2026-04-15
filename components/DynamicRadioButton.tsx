@@ -1,7 +1,3 @@
-import { useState } from "react";
-import { QuestionChoice } from "@/utils/types";
-
-
 
 export const QuestionChoiceRadioButtons = ({ options, selectedOption, onSelect }) => {
     //const [selectedOption, setSelectedOption] = useState(null);

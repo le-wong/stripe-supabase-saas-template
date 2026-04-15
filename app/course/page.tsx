@@ -28,7 +28,6 @@ export default async function WebCourse(request: NextRequest) {
 
     //console.log(courseProgress)
     const courseQuestions = await getCourseQuestions(courseInfo.id);
-    console.log(courseQuestions)
     const startingQuestion = (await getUnattemptedCourseQuestions(courseInfo.id, userId)).at(0)?.number;
     const answeredQuestions = await getAnsweredQuestions(courseInfo.id, userId);
     const fixedCourseQuestions: Map<number, Question> = new Map();
@@ -57,7 +56,7 @@ export default async function WebCourse(request: NextRequest) {
             })
         }
     }
-    console.log(fixedCourseQuestions)
+    //console.log(fixedCourseQuestions)
 
     return (
         <>
@@ -75,15 +74,3 @@ export default async function WebCourse(request: NextRequest) {
         </>
     )
 }
-
-/*
-<ul className="mt-6 grid grid-cols-1 gap-4">
-                {Array.from(fixedCourseQuestions.entries()).map(([questionKey, questionValue]) =>
-                (
-                    <li key={questionKey}>
-                        <QuestionBlock questionNumber={questionKey} questionText={questionValue.text} questionChoices={questionValue.choices} />
-                    </li>
-                ))}
-            </ul>
-*/
-
