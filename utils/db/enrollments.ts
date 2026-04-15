@@ -49,7 +49,7 @@ export async function dbEnrollInCourse(userId: string, courseId: string) {
 
 export async function dbWithdrawFromCourse(userId: string, courseId: string) {
     return db.update(enrollmentsTable)
-        .set({ status: CourseStatus.Inactive })
+        .set({ status: CourseStatus.Inactive, completedAt: null })
         .where(
             and(
                 eq(enrollmentsTable.userId, userId),

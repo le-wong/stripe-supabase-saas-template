@@ -3,7 +3,9 @@
 
 import { db } from "@/utils/db/db";
 import { coursesTable, questionsTable, questionChoicesTable, usersTable, enrollmentsTable, courseAttemptsTable } from "@/utils/db/schema";
-import { eq, and, or, isNull, isNotNull, ne } from "drizzle-orm";
+import { eq, and, or, isNull, isNotNull, ne, sql } from "drizzle-orm";
+import { dbWithdrawFromCourse } from "./enrollments";
+import { CourseStatus } from "../types";
 
 export async function upsertProductFromStripe(product: {
     id: string;
@@ -98,8 +100,9 @@ export async function dbGetUnattemptedCourseQuestions(courseId: string, userId: 
 }
 
 export async function dbGetUnansweredCourseQuestions(courseId: string, userId: string) {
-    return db.select({ questionId: courseAttemptsTable.questionId, courseId: courseAttemptsTable.courseId })
+    return db.select({ questionId: courseAttemptsTable.questionId, courseId: courseAttemptsTable.courseId, questionNumber: questionsTable.questionOrder })
         .from(courseAttemptsTable)
+        .leftJoin(questionsTable, eq(questionsTable.id, courseAttemptsTable.questionId))
         .where(
             and(
                 and(
@@ -153,7 +156,7 @@ export async function dbSaveCourseQuestion(courseId: string, userId: string, que
 
 export async function dbGradeCourse(courseId: string, userId: string) {
     const correctQuestions = await db.select({ id: courseAttemptsTable.questionId }).from(courseAttemptsTable)
-        .leftJoin(questionChoicesTable, eq(questionChoicesTable.id, courseAttemptsTable.questionId))
+        .leftJoin(questionChoicesTable, eq(questionChoicesTable.id, courseAttemptsTable.answerId))
         .where(
             and(
                 eq(courseAttemptsTable.userId, userId),
@@ -163,6 +166,38 @@ export async function dbGradeCourse(courseId: string, userId: string) {
         )
     const totalQuestions = await db.select({ total: coursesTable.totalQuestions }).from(coursesTable)
         .where(eq(coursesTable.id, courseId))
-
+    console.log(correctQuestions)
+    await db.update(enrollmentsTable)
+        .set({ correctAnswers: correctQuestions.length })
+        .where(
+            and(
+                eq(enrollmentsTable.courseId, courseId),
+                eq(enrollmentsTable.userId, userId)
+            )
+        )
     return { correct: correctQuestions, total: totalQuestions }
+}
+
+export async function dbRestartCourseTestingOnly(courseId: string, userId: string) {
+    await db.delete(courseAttemptsTable)
+        .where(
+            and(
+                eq(courseAttemptsTable.courseId, courseId),
+                eq(courseAttemptsTable.userId, userId)
+            )
+        );
+
+    await dbWithdrawFromCourse(userId, courseId);
+}
+
+export async function dbCompleteCourse(courseId: string, userId: string) {
+    const { correct, total } = await dbGradeCourse(courseId, userId);
+    return db.update(enrollmentsTable)
+        .set({ completedAt: sql`now()`, correctAnswers: correct.length, status: CourseStatus.Completed })
+        .where(
+            and(
+                eq(enrollmentsTable.userId, userId),
+                eq(enrollmentsTable.courseId, courseId)
+            )
+        )
 }

@@ -2,7 +2,7 @@
 "use server"
 //import { useCourseStore } from "@/app/course/course-store";
 import { redirect } from "next/navigation"
-import { dbGetCourseProgressForUser, dbGetAllCourseQuestions, dbGetUnansweredCourseQuestions, dbSaveCourseQuestion, dbGetUnattemptedCourseQuestions, dbGetAnsweredCourseQuestions } from "@/utils/db/courses"
+import { dbGetCourseProgressForUser, dbGetAllCourseQuestions, dbGetUnansweredCourseQuestions, dbSaveCourseQuestion, dbGetUnattemptedCourseQuestions, dbGetAnsweredCourseQuestions, dbCompleteCourse } from "@/utils/db/courses"
 
 
 export async function getCourseProgress(courseId: string, userId: string) {
@@ -34,4 +34,12 @@ export async function getAnsweredQuestions(courseId: string, userId: string) {
     }
 
     return myMap;
+}
+
+export async function completeCourse(currentState: { message: string }, formData: FormData) {
+    const userId = formData.get("user") as string;
+    const courseId = formData.get("course") as string;
+    await dbCompleteCourse(courseId, userId);
+
+    redirect('/dashboard')
 }

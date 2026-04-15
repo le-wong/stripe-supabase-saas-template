@@ -2,7 +2,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 import { CourseCard } from '@/components/CourseCard'
-import { getEnrollments, enroll, getEntitlements, withdraw, getUserInfo, launchCourse } from './actions'
+import { getEnrollments, enroll, getEntitlements, withdraw, getUserInfo, launchCourse, restartTestingOnly } from './actions'
 import { Course, CourseStatus } from "@/utils/types";
 import { Banner } from '@/components/ui/banner'
 import Link from "next/link"
@@ -37,7 +37,9 @@ export default async function Dashboard() {
                 progress: {
                     questionsAnswered: course.enrollments.questionsAnswered ?? 0,
                     questionsCorrect: course.enrollments.correctAnswers ?? 0,
-                    startedAt: course.enrollments.startedAt
+                    questionsTotal: course.courses.totalQuestions ?? 0,
+                    startedAt: course.enrollments.startedAt,
+                    completedAt: course.enrollments.completedAt
                 }
             })
         }
@@ -55,7 +57,9 @@ export default async function Dashboard() {
                 progress: {
                     questionsAnswered: 0,
                     questionsCorrect: 0,
-                    startedAt: new Date()
+                    questionsTotal: course.courses.totalQuestions ?? 0,
+                    startedAt: new Date(),
+                    completedAt: null
                 }
             })
         }
@@ -82,6 +86,7 @@ export default async function Dashboard() {
                                 myCourse={course}
                                 formAction={((course.status === CourseStatus.NotStarted || course.status === CourseStatus.Inactive) && enroll)
                                     || (course.status === CourseStatus.Active && withdraw)
+                                    || (course.status === CourseStatus.Completed && restartTestingOnly)
                                 }
                                 launchAction={launchCourse}
                             >

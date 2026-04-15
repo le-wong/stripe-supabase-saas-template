@@ -20,7 +20,7 @@ export const CourseProgressCard = (props: ProgressProps) => {
                 <CardTitle className="text-xl font-bold">{props.courseName}</CardTitle>
             </CardHeader>
             <CardContent style={{ whiteSpace: 'pre-line' }}>
-                <div className="mt-6 grid grid-cols-1 gap-4">
+                <div className="mt-6 grid grid-cols-1 gap-2">
                     Progress: {props.questionsAnswered} answered / {props.questionsTotal}
                 </div>
             </CardContent>

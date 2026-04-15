@@ -5,6 +5,7 @@ import { getUserEntitlements } from '@/utils/db/entitlements'
 import { redirect } from "next/navigation"
 import { revalidatePath } from 'next/cache'
 import { dbGetLicenseInfo, dbSetLicenseInfo } from '@/utils/db/licenses'
+import { dbRestartCourseTestingOnly } from '@/utils/db/courses'
 
 
 export async function getUserInfo(userId: string) {
@@ -47,7 +48,15 @@ export async function withdraw(currentState: { message: string }, formData: Form
     redirect('/dashboard')
 }
 
+export async function restartTestingOnly(currentState: { message: string }, formData: FormData) {
+    const userId = formData.get("user") as string;
+    const courseId = formData.get("course") as string;
 
+    await dbRestartCourseTestingOnly(courseId, userId);
+
+    revalidatePath('/', 'layout')
+    redirect('/dashboard')
+}
 
 
 export async function launchCourse(currentState: { message: string }, formData: FormData) {

@@ -19,7 +19,9 @@ export const enum CourseStatus {
 export interface CourseProgress {
     questionsAnswered: number,
     questionsCorrect: number,
-    startedAt: Date
+    questionsTotal: number,
+    startedAt: Date,
+    completedAt: Date | null
 }
 
 export interface Question {

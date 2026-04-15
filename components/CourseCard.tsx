@@ -18,9 +18,11 @@ export const CourseCard = (props: CourseProps) => {
     const [formState, formAction] = useActionState(props.formAction, initialState)
     const [launchState, launchAction] = useActionState(props.launchAction, initialState)
 
-    const courseProgress = props.myCourse.status === CourseStatus.NotStarted ? "" :
-        `Progress: ${props.myCourse.progress.questionsAnswered}/100 attempted | ${props.myCourse.progress.questionsCorrect}/100 correct \n\
+    const courseProgress = props.myCourse.status === CourseStatus.NotStarted ? "Progress: Not Started" :
+        `Progress: ${props.myCourse.progress.questionsAnswered}/${props.myCourse.progress.questionsTotal} attempted | ${props.myCourse.progress.questionsCorrect}/${props.myCourse.progress.questionsTotal} correct \n\
         Course Started: ${props.myCourse.progress.startedAt.toDateString()}`
+
+    const courseCompleted = props.myCourse.status === CourseStatus.Completed ? `\nCourse Completed: ${props.myCourse.progress.completedAt?.toDateString() ?? ""}` : "";
     return (
 
         <Card className="max-w-md mx-auto mb-8">
@@ -47,7 +49,9 @@ export const CourseCard = (props: CourseProps) => {
                 <CardDescription style={{ whiteSpace: 'pre-line' }}>
                     {props.myCourse.description}
                     <br />
+                    <br />
                     {courseProgress}
+                    {courseCompleted}
                 </CardDescription>
                 <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2">
                     <form action={formAction}>
@@ -58,6 +62,9 @@ export const CourseCard = (props: CourseProps) => {
                         </Button>}
                         {props.myCourse.status === CourseStatus.Active && <Button type="submit" variant="default" className="w-full">
                             Withdraw From Course
+                        </Button>}
+                        {props.myCourse.status === CourseStatus.Completed && <Button type="submit" variant="default" className="w-full bg-red-500">
+                            Restart Course (TEST ONLY)
                         </Button>}
                         {formState?.message && (
                             <p className="text-sm text-red-500 text-center py-2">{formState.message}</p>
