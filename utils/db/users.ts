@@ -8,3 +8,9 @@ export async function dbGetUserInfo(user: string) {
         .from(usersTable)
         .where(eq(usersTable.id, user));
 }
+
+export async function dbSetUserName(userId: string, name: string) {
+    return db.update(usersTable)
+        .set({ name: name })
+        .where(eq(usersTable.id, userId))
+}

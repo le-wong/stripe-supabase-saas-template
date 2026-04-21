@@ -45,18 +45,48 @@ export async function setProductInactive(stripeProductId: string) {
 }
 
 export async function dbGetCourseProgressForUser(courseId: string, userId: string) {
-    return db.select({
+    const questionCount = db.$with('questions_answered').as(
+        db.select().from(courseAttemptsTable)
+            .leftJoin(questionsTable, eq(questionsTable.id, courseAttemptsTable.questionId))
+            .where(
+                and(
+                    eq(courseAttemptsTable.courseId, courseId),
+                    eq(courseAttemptsTable.userId, userId),
+                    eq(questionsTable.active, true),
+                    isNotNull(courseAttemptsTable.answerId)
+                )
+            )
+    );
+
+    const questionsCorrect = db.$with('questions_correct').as(
+        db.select().from(courseAttemptsTable)
+            .leftJoin(questionsTable, eq(questionsTable.id, courseAttemptsTable.questionId))
+            .leftJoin(questionChoicesTable, eq(questionChoicesTable.id, courseAttemptsTable.answerId))
+            .where(
+                and(
+                    eq(courseAttemptsTable.courseId, courseId),
+                    eq(courseAttemptsTable.userId, userId),
+                    eq(questionsTable.active, true),
+                    eq(questionChoicesTable.isCorrect, true)
+                )
+            )
+    );
+
+    return db.with(questionCount, questionsCorrect).select({
         courseName: coursesTable.name,
-        questionsAnswered: enrollmentsTable.questionsAnswered,
-        questionsTotal: coursesTable.totalQuestions
+        questionsTotal: coursesTable.totalQuestions,
+        questionsAnswered: sql`(select count(*) from ${questionCount})`,
+        questionsCorrect: sql`(select count(*) from ${questionsCorrect})`,
     }).from(enrollmentsTable)
         .leftJoin(coursesTable, eq(coursesTable.id, courseId))
+        .leftJoin(courseAttemptsTable, and(eq(courseAttemptsTable.courseId, courseId), eq(courseAttemptsTable.userId, userId)))
         .where(
             and(
                 eq(enrollmentsTable.userId, userId),
                 eq(enrollmentsTable.courseId, courseId)
             )
         )
+
 }
 
 export async function dbGetAllCourseQuestions(courseId: string) {
@@ -166,7 +196,6 @@ export async function dbGradeCourse(courseId: string, userId: string) {
         )
     const totalQuestions = await db.select({ total: coursesTable.totalQuestions }).from(coursesTable)
         .where(eq(coursesTable.id, courseId))
-    console.log(correctQuestions)
     await db.update(enrollmentsTable)
         .set({ correctAnswers: correctQuestions.length })
         .where(
@@ -186,7 +215,6 @@ export async function dbRestartCourseTestingOnly(courseId: string, userId: strin
                 eq(courseAttemptsTable.userId, userId)
             )
         );
-
     await dbWithdrawFromCourse(userId, courseId);
 }
 

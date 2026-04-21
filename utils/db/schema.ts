@@ -18,7 +18,15 @@ export const licensesTable = pgTable('licenses_table', {
         .notNull()
         .references(() => usersTable.id, { onDelete: 'cascade' }),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-});
+},
+    (table) => ({
+        userCourseUnique: unique("license_user_type_state_unique").on(
+            table.userId,
+            table.typeId,
+            table.stateId
+        ),
+    })
+);
 
 export const licenseTypeTable = pgTable('license_type_table', {
     id: uuid('id').primaryKey().defaultRandom(),
@@ -88,7 +96,6 @@ export const enrollmentsTable = pgTable('enrollments', {
         .notNull()
         .references(() => coursesTable.id, { onDelete: 'cascade' }),
     status: text('status').default('active'),
-    questionsAnswered: integer('questions_answered').default(0),
     correctAnswers: integer('correct_answers').default(0),
     startedAt: timestamp('started_at', { withTimezone: true }).defaultNow().notNull(),
     completedAt: timestamp('completed_at', { withTimezone: true }),
@@ -142,7 +149,8 @@ export const courseAttemptsTable = pgTable('attempts', {
             table.courseId,
             table.questionId
         ),
-    }));
+    })
+);
 
 export type InsertUser = typeof usersTable.$inferInsert;  //defines the row data going in for users_table
 export type SelectUser = typeof usersTable.$inferSelect;  //defines the row data coming out for users_table

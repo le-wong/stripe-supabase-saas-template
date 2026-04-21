@@ -26,7 +26,7 @@ export default async function WebCourse(request: NextRequest) {
         questionsTotal: 0
     }
 
-    //console.log(courseProgress)
+    console.log(courseProgress)
     const courseQuestions = await getCourseQuestions(courseInfo.id);
     const startingQuestion = (await getUnattemptedCourseQuestions(courseInfo.id, userId)).at(0)?.number;
     const answeredQuestions = await getAnsweredQuestions(courseInfo.id, userId);
@@ -62,15 +62,17 @@ export default async function WebCourse(request: NextRequest) {
         <>
             {courseProgress && courseProgress.courseName && <CourseProgressCard
                 courseName={courseProgress.courseName}
-                questionsAnswered={courseProgress.questionsAnswered ?? 0}
+                questionsAnswered={courseProgress.questionsAnswered as number ?? 0}
                 questionsTotal={courseProgress?.questionsTotal ?? 0}
             >
             </CourseProgressCard>}
-            <CourseBlock
+            {fixedCourseQuestions.size > 0 ? <CourseBlock
                 courseId={courseInfo.id}
                 userId={userId}
                 questions={Array.from(fixedCourseQuestions.values())}
                 startIndex={startingQuestion ? startingQuestion - 1 : 0} />
+                : <span className="px-4">Oh no... our (questions) table... it's broken........</span>
+            }
         </>
     )
 }

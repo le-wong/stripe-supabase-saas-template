@@ -4,9 +4,8 @@ import { dbGetAllEnrollmentsForUser, dbWithdrawFromCourse, dbEnrollInCourse } fr
 import { getUserEntitlements } from '@/utils/db/entitlements'
 import { redirect } from "next/navigation"
 import { revalidatePath } from 'next/cache'
-import { dbGetLicenseInfo, dbSetLicenseInfo } from '@/utils/db/licenses'
+import { dbGetLicenseInfo, dbSetLicenseInfo, dbRemoveLicense } from '@/utils/db/licenses'
 import { dbRestartCourseTestingOnly } from '@/utils/db/courses'
-
 
 export async function getUserInfo(userId: string) {
     return await dbGetUserInfo(userId);
@@ -25,17 +24,27 @@ export async function getLicenseInfo(userId: string) {
 }
 
 export async function updateLicenseInfo(userId: string, licenseNumber: string, licenseState: string, licenseType: string) {
-    return await dbSetLicenseInfo(userId, licenseNumber, licenseState, licenseType);
+    await dbSetLicenseInfo(userId, licenseNumber, licenseState, licenseType);
+
+    revalidatePath('/profile', 'page')
+    redirect('/profile')
 }
 
-export async function enroll(currentState: { message: string }, formData: FormData) {
+export async function removeLicense(id: string) {
+    await dbRemoveLicense(id);
+
+    revalidatePath('/profile', 'page')
+    redirect('/profile')
+}
+
+export async function enrollAndLaunchCourse(currentState: { message: string }, formData: FormData) {
     const userId = formData.get("user") as string;
     const courseId = formData.get("course") as string;
 
     await dbEnrollInCourse(userId, courseId);
 
-    revalidatePath('/', 'layout')
-    redirect('/dashboard')
+    const course = new URLSearchParams({ id: courseId }).toString();
+    redirect(`/course?${course}`)
 }
 
 export async function withdraw(currentState: { message: string }, formData: FormData) {
@@ -61,9 +70,9 @@ export async function restartTestingOnly(currentState: { message: string }, form
 
 export async function launchCourse(currentState: { message: string }, formData: FormData) {
     const courseId = formData.get("course") as string
-    //const courseName = formData.get("name") as string
-    const data = { id: courseId } //, name: courseName }
-    const course = new URLSearchParams(data).toString();
+
+    const course = new URLSearchParams({ id: courseId }).toString();
     redirect(`/course?${course}`)
 
 }
+

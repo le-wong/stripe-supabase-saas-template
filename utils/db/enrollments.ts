@@ -33,13 +33,11 @@ export async function dbEnrollInCourse(userId: string, courseId: string) {
             userId: userId,
             courseId: courseId,
             status: CourseStatus.Active,
-            questionsAnswered: 0,
             correctAnswers: 0
         })
         .onConflictDoUpdate({
             target: [enrollmentsTable.userId, enrollmentsTable.courseId],
             set: {
-                questionsAnswered: 0,
                 correctAnswers: 0,
                 status: CourseStatus.Active,
                 startedAt: sql`now()`

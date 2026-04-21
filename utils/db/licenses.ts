@@ -21,34 +21,23 @@ export async function dbSetLicenseInfo(userId: string, licenseNumber: string, li
         db.select({ id: statesTable.id }).from(statesTable).where(eq(statesTable.state, licenseState))
     )
 
-    return db.insert(licensesTable)
+    return db.with(licenseTypeId, licenseStateId)
+        .insert(licensesTable)
         .values({
             userId: userId,
             licenseNumber: licenseNumber,
             stateId: sql`(select id from ${licenseStateId})`,
             typeId: sql`(select id from ${licenseTypeId})`,
         })
-}
-
-/*
-export async function dbEnrollInCourse(userId: string, courseId: string) {
-
-    return db.insert(enrollmentsTable)
-        .values({
-            userId: userId,
-            courseId: courseId,
-            status: CourseStatus.Active,
-            questionsAnswered: 0,
-            correctAnswers: 0
-        })
         .onConflictDoUpdate({
-            target: [enrollmentsTable.userId, enrollmentsTable.courseId],
+            target: [licensesTable.userId, licensesTable.stateId, licensesTable.typeId],
             set: {
-                questionsAnswered: 0,
-                correctAnswers: 0,
-                status: CourseStatus.Active,
-                startedAt: sql`now()`
+                licenseNumber: licenseNumber
             },
-        }).returning();
+        })
 }
-        */
+
+export async function dbRemoveLicense(id: string) {
+    return db.delete(licensesTable)
+        .where(eq(licensesTable.id, id))
+}

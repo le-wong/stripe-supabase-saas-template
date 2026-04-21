@@ -22,17 +22,22 @@ export default function CourseBlock(props: CourseProps) {
     const questions = props.questions;
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(props.startIndex);
 
-    let startingOption = null;
 
-    for (const choice of questions[currentQuestionIndex].choices) {
-        if (choice.userChose) {
-            startingOption = choice.choiceNumber;
-            break;
+
+    const [selectedOption, setSelectedOption] = useState(() => {
+        let startingOption = null;
+
+        for (const choice of questions[currentQuestionIndex].choices) {
+            if (choice.userChose) {
+                startingOption = choice.choiceNumber;
+                break;
+            }
         }
-    }
-    //console.log(startingOption)
+        //console.log(startingOption)
+        return startingOption
+    });
 
-    const [selectedOption, setSelectedOption] = useState(startingOption);
+
     const [checkSubmit, setCheckSubmit] = useState(false);
 
     const initialMessage = {
@@ -43,7 +48,9 @@ export default function CourseBlock(props: CourseProps) {
     const handleNext = async () => {
         const userAnswerId = selectedOption ? questions[currentQuestionIndex].choices[selectedOption - 1].id : null;
         await saveCourseQuestion(props.courseId, props.userId, questions[currentQuestionIndex].id, userAnswerId)
-
+        if (selectedOption) {
+            questions[currentQuestionIndex].choices[selectedOption - 1].userChose = true;
+        }
         if (currentQuestionIndex < questions.length - 1) {
             //console.log(currentQuestionIndex)
             setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -93,7 +100,7 @@ export default function CourseBlock(props: CourseProps) {
         const unansweredQuestions = await getUnansweredQuestions(props.courseId, props.userId);
         console.log(unansweredQuestions)
         if (unansweredQuestions.length > 0) {
-            setSubmitMessage(`Are you sure you want to finalize your answers and submit? There are ${unansweredQuestions.length} unanswered questions!`)
+            setSubmitMessage("Are you sure you want to finalize your answers and submit? " + (unansweredQuestions.length === 1 ? "There is 1 unanswered question!" : `There are ${unansweredQuestions.length} unanswered questions!`))
         }
         else {
             setSubmitMessage("Are you sure you want to finalize your answers and submit?")
@@ -140,16 +147,16 @@ export default function CourseBlock(props: CourseProps) {
 
     return (
         <div>
-            <span className="grid grid-cols-4 gap-4 justify-end rounded-md ring mx-4 p-4">
+            <span className="grid grid-cols-5 gap-4 justify-end rounded-md ring mx-4 p-4">
                 Go to...
                 <Button className="max-w-sm" onClick={handleFirstQ}> First question</Button>
-                <Button className="max-w-sm" onClick={handleFirstSkippedQ}> First skipped question</Button>
-                <Button className="max-w-sm" onClick={handleFirstUnattemptedQ}> First unattempted question</Button>
+                <Button className="max-w-xs" onClick={handleFirstSkippedQ}> First skipped question</Button>
+                <Button className="max-w-xs" onClick={handleFirstUnattemptedQ}> First unattempted question</Button>
             </span>
             <br />
             {checkSubmit &&
-                <span className="grid grid-cols-3 grid-rows-1 gap-4 justify-end px-6">
-                    <form action={formAction}>
+                <span >
+                    <form action={formAction} className="grid grid-cols-3 grid-rows-1 gap-4 justify-end px-6">
                         <input type="hidden" name="user" value={props.userId} />
                         <input type="hidden" name="course" value={props.courseId} />
                         <p className="col-span-2">{submitMessage}</p>
@@ -162,7 +169,7 @@ export default function CourseBlock(props: CourseProps) {
                     <CardTitle className="text-xl font-bold">Question {questions[currentQuestionIndex].number}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <CardDescription>
+                    <CardDescription className="whitespace-pre-line">
                         {questions[currentQuestionIndex].text}
                     </CardDescription>
                     <br></br>

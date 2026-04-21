@@ -50,10 +50,10 @@ export default function NavbarProfileDropdown() {
                             <span>Billing</span>
                         </DropdownMenuItem>
                     </Link>
-                    <Link href="#">
+                    <Link href="/contact">
                         <DropdownMenuItem>
                             <HelpCircle className="mr-2 h-4 w-4" />
-                            <span>Help</span>
+                            <span>Contact Us</span>
                         </DropdownMenuItem>
                     </Link>
                     <DropdownMenuSeparator />
