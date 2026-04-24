@@ -32,7 +32,7 @@ export const CourseStatusFrom = (enumObj: CourseStatus) => ({
                 return "Not Started";
             }
             default: {
-                return "Not Found";
+                return "Invalid";
             }
         }
     }
@@ -75,6 +75,15 @@ export enum SupportedLicenseTypes {
 }
 
 export enum SupportedStates {
+    CA = "CA",
+    FL = "FL",
+    NY = "NY",
+    OR = "OR",
+    TX = "TX",
+    WA = "WA",
+}
+
+export enum AllStates {
     AL = "AL",
     AK = "AK",
     AZ = "AZ",

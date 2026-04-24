@@ -1,4 +1,7 @@
-import Downshift, { useSelect } from "downshift";
+'use client';
+import Downshift, { useCombobox, useSelect } from "downshift";
+import { Input } from "./input";
+import { Label } from "./label";
 
 interface DropdownProps {
     items: string[],
@@ -6,51 +9,50 @@ interface DropdownProps {
     onItemSelect: any
 }
 
-export const Dropdown = (props: DropdownProps) => {
-    //const [selectedItem, setSelectedItem] = useState(null);
-    /*
+//export const Dropdown = (props: DropdownProps) => {
+export function Dropdown(props: DropdownProps) {
+    const items = props.items
+    const selectedItem = props.selectedItem
+
     const {
         isOpen,
-        selectedItem,
         highlightedIndex,
         getToggleButtonProps,
         getMenuProps,
         getItemProps,
-    } = useSelect({
-        items,
-        //selectedItem,
-        onSelectedItemChange: ({ selectedItem: newSelectedItem }) => onItemSelect(newSelectedItem)
-    });
-    console.log(onItemSelect)
-    */
-    const items = props.items
+        getInputProps,
+        getLabelProps
+    } = useCombobox({
+        items: items,
+        selectedItem,
+        itemToString(item) {
+            return item ?? ''
+        },
+        onSelectedItemChange: ({ selectedItem }) => {
+            props.onItemSelect(selectedItem)
+        },
+        defaultIsOpen: false
+    })
+
     return (
-        <Downshift onChange={props.onItemSelect} >
-            {({
-                isOpen,
-                //selectedItem,
-                highlightedIndex,
-                getToggleButtonProps,
-                getMenuProps,
-                getItemProps,
-            }) => (
-                <div className='border rounded-md text-sm px-3 py-2'>
-                    <button className="" {...getToggleButtonProps()}>
-                        {props.selectedItem || 'Select...'}
-                    </button>
-                    <ul {...getMenuProps()} className={`absolute w-72 bg-white mt-1 shadow-md max-h-80 overflow-scroll p-0 z-10 ${!isOpen && 'hidden'
-                        }`}>
-                        {isOpen &&
-                            items.map((item, index) => (
-                                <li className={highlightedIndex === index ? 'bg-blue-300' : 'bg-white'}
-                                    key={`${item}${index}`}
-                                    {...getItemProps({ item, index })}
-                                >
-                                    {item}
-                                </li>
-                            ))}
-                    </ul>
-                </div>)}
-        </Downshift>
+        <div >
+            <div >
+                <Label {...getLabelProps()}></Label>
+                <Input className="" {...getInputProps()} placeholder={props.selectedItem || 'Select...'} />
+                <button className="" {...getToggleButtonProps()} />
+            </div>
+            <ul {...getMenuProps()} className={`absolute w-72 bg-white mt-1 shadow-md max-h-80 overflow-scroll p-0 z-10 ${!isOpen && 'hidden'
+                }`}>
+                {isOpen &&
+                    items.map((item, index) => (
+                        <li className={highlightedIndex === index ? 'bg-blue-300' : 'bg-white'}
+                            key={`${item}${index}`}
+                            {...getItemProps({ item, index })}
+                        >
+                            {item}
+                        </li>
+                    ))}
+            </ul>
+        </div>
     );
 };

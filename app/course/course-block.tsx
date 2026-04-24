@@ -5,6 +5,7 @@ import { Question } from "@/utils/types"
 import { useState, useActionState } from "react"
 import { QuestionChoiceRadioButtons } from "@/components/DynamicRadioButton";
 import { completeCourse, getUnansweredQuestions, saveCourseQuestion } from "./actions";
+import { Description, Dialog, DialogPanel, DialogTitle, DialogBackdrop } from '@headlessui/react'
 
 interface CourseProps {
     courseId: string,
@@ -154,7 +155,7 @@ export default function CourseBlock(props: CourseProps) {
                 <Button className="max-w-xs" onClick={handleFirstUnattemptedQ}> First unattempted question</Button>
             </span>
             <br />
-            {checkSubmit &&
+            {false &&
                 <span >
                     <form action={formAction} className="grid grid-cols-3 grid-rows-1 gap-4 justify-end px-6">
                         <input type="hidden" name="user" value={props.userId} />
@@ -192,7 +193,23 @@ export default function CourseBlock(props: CourseProps) {
                         </Button>}
                 </CardFooter>
             </Card>
-
+            <Dialog open={checkSubmit} onClose={() => setCheckSubmit(false)} className="relative z-50">
+                <DialogBackdrop className="fixed inset-0 bg-black/30" />
+                <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
+                    <DialogPanel className="max-w-lg space-y-4 bg-white p-8 rounded-lg">
+                        <DialogTitle className="font-bold">Submit Course Exam</DialogTitle>
+                        <Description>{submitMessage}</Description>
+                        <div className="flex gap-4 items-center">
+                            <Button onClick={() => setCheckSubmit(false)}>Cancel</Button>
+                            <form action={formAction} className="">
+                                <input type="hidden" name="user" value={props.userId} />
+                                <input type="hidden" name="course" value={props.courseId} />
+                                <Button className="max-w-xs col-start-3" type="submit">Submit!</Button>
+                            </form>
+                        </div>
+                    </DialogPanel>
+                </div>
+            </Dialog>
         </div>
     )
 }

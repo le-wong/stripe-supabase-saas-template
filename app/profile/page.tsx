@@ -27,7 +27,7 @@ export default async function Profile() {
             number: license.licenses_table.licenseNumber
         })
     }
-    console.log(userLicenses)
+    //console.log(userLicenses)
     return (
         <main className="flex-1">
             {!data.user.phone &&
