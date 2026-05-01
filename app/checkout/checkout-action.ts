@@ -7,6 +7,11 @@ import { dbGetUserInfo } from "@/utils/db/users";
 
 export const checkoutAction = async (formData: FormData): Promise<void> => {
     const userId = formData.get("user") as string;
+    //console.log(userId);
+    if (!userId) {
+        redirect('/login?from=%2Fcheckout')
+    }
+
     const stripeId = (await dbGetUserInfo(userId)).at(0)?.stripe_id;
     const itemsJson = formData.get("items") as string;
     const items = JSON.parse(itemsJson);

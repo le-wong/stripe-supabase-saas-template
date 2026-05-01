@@ -4,14 +4,15 @@ import Stripe from "stripe";
 import { ProductCard } from "./ProductCard";
 import { useMemo, useState } from "react";
 import { Button } from "./ui/button";
+import { SupportedLicenseTypes, SupportedStates } from "@/utils/types";
 
 interface Props {
     products: Stripe.Product[];
 }
 
 //TODO: get all from stripe products?
-const POSITION_TAGS = ["Electrician", "Plumber", "Contractor", "HVAC"];
-const STATE_TAGS = ["OR", "WA", "CA", "TX", "FL", "NY"];
+const POSITION_TAGS = Object.values(SupportedLicenseTypes)
+const STATE_TAGS = Object.values(SupportedStates)
 
 function normalizeSpaces(s: string) {
     return s.replace(/\s+/g, " ").trim();
@@ -48,12 +49,12 @@ export const ProductList = ({ products }: Props) => {
     const activeStateTokens = useMemo(() => tokenizeWords(searchState), [searchState]);
 
     const onTagClick = (tag: string) => {
-        if (STATE_TAGS.includes(tag)) {
+        if (STATE_TAGS.includes(tag as any)) {
             setSearchState((prev) => {
                 return updateTokens(prev, tag);
             });
         }
-        else if (POSITION_TAGS.includes(tag)) {
+        else if (POSITION_TAGS.includes(tag as any)) {
             setSearchPosition((prev) => {
                 return updateTokens(prev, tag);
             });

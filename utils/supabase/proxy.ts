@@ -46,19 +46,41 @@ export async function updateSession(request: NextRequest) {
         !request.nextUrl.pathname.startsWith('/signup') &&
         !request.nextUrl.pathname.startsWith('/forgot-password') &&
         !request.nextUrl.pathname.startsWith('/products') &&
+        !request.nextUrl.pathname.startsWith('/checkout') &&
         !(request.nextUrl.pathname === '/')
     ) {
         // no user, potentially respond by redirecting the user to the login page
         url.pathname = '/login'
         return NextResponse.redirect(url)
     }
-    // // If user is logged in, redirect to dashboard
-    /*if (user && request.nextUrl.pathname === '/') {
-        console.log('sneaky redirect')
+    //If user is logged in and tries to access /login, redirect to dashboard
+    if (user && request.nextUrl.pathname.startsWith('/login')) {
         url.pathname = '/dashboard'
         return NextResponse.redirect(url)
     }
-        */
+    //If user is logged in and attempting to launch a course, try to get the course info and pass it to the server component
+    if (user && request.nextUrl.pathname.startsWith('/course')) {
+        const searchParams = request.nextUrl.searchParams;
+        const id = searchParams.get('id');
+
+        const requestHeaders = new Headers(request.headers);
+
+        if (id) {
+            const query = { id: id }
+            requestHeaders.set('x-query', JSON.stringify(query));
+        }
+
+        const myNewResponse = NextResponse.next({
+            request: {
+                headers: requestHeaders
+            }
+        });
+        const cookiesToSet = supabaseResponse.cookies.getAll();
+        cookiesToSet.forEach(({ name, value, options }) =>
+            myNewResponse.cookies.set(name, value, options)
+        )
+        return myNewResponse
+    }
     // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
     // creating a new response object with NextResponse.next() make sure to:
     // 1. Pass the request in it, like so:

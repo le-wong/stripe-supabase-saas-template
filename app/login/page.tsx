@@ -1,26 +1,34 @@
+"use client";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-
 import Link from 'next/link'
 import Image from 'next/image'
-
 import ProviderSigninBlock from '@/components/ProviderSigninBlock'
 import LoginForm from "@/components/LoginForm"
+import { useSearchParams } from "next/navigation";
+import MyIcon from "@/components/ui/app-icon";
+
 export default function Login() {
+    const searchParams = useSearchParams();
+    const from = searchParams.get('from') || '/dashboard';
+
     return (
         <div className="flex items-center justify-center bg-muted min-h-screen">
             <Card className="w-[350px] mx-auto">
                 <CardHeader className="space-y-1">
                     <div className="flex justify-center py-4">
                         <Link href='/'>
-                            <Image src="/logo.png" alt="logo" width={50} height={50} />
+                            {//<Image src="/logo.png" alt="logo" width={50} height={50} />
+                            }
+                            <MyIcon size="logo"></MyIcon>
                         </Link>
                     </div>
-
-                    <CardTitle className="text-2xl font-bold">Login</CardTitle>
+                    {from === '/checkout' ?
+                        <CardTitle className="text-xl font-bold">Login to complete checkout</CardTitle>
+                        : <CardTitle className="text-2xl font-bold">Login</CardTitle>}
                     <CardDescription>Choose your preferred login method</CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-4">
-                    <LoginForm />
+                    <LoginForm from={from} />
                     <div className="relative">
                         <div className="absolute inset-0 flex items-center">
                             <span className="w-full border-t" />

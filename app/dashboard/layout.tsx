@@ -9,8 +9,8 @@ import { dbGetUserInfo } from "@/utils/db/users";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-    title: "SAAS Starter Kit",
-    description: "SAAS Starter Kit with Stripe, Supabase, Postgres",
+    title: "TextCEU - Continuing Education",
+    description: "you know what it be",
 };
 
 export default async function DashboardLayout({

@@ -2,10 +2,11 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 import { CourseCard } from '@/components/CourseCard'
-import { getEnrollments, enroll, getEntitlements, withdraw, getUserInfo, launchCourse } from './actions'
+import { getEnrollments, enrollAndLaunchCourse, getEntitlements, withdraw, getUserInfo, launchCourse, restartTestingOnly } from './actions'
 import { Course, CourseStatus } from "@/utils/types";
 import { Banner } from '@/components/ui/banner'
 import Link from "next/link"
+import { getCourseProgress } from '../course/actions'
 
 export default async function Dashboard() {
     const supabase = await createClient()
@@ -26,6 +27,8 @@ export default async function Dashboard() {
     const courses = new Map<string, Course>;
     for (const course of userProgress) {
         if (course.courses?.id) {
+            const progress = (await getCourseProgress(course.courses.id, userId)).at(0);
+
             courses.set(course.courses.id, {
                 courseId: course.courses.id,
                 courseName: course.courses.name,
@@ -35,9 +38,11 @@ export default async function Dashboard() {
                 status: course.enrollments.status as CourseStatus,
                 description: course.courses.description as string,
                 progress: {
-                    questionsAnswered: course.enrollments.questionsAnswered ?? 0,
-                    questionsCorrect: course.enrollments.correctAnswers ?? 0,
-                    startedAt: course.enrollments.startedAt
+                    questionsAnswered: progress?.questionsAnswered as number ?? 0,
+                    questionsCorrect: progress?.questionsCorrect as number ?? 0,
+                    questionsTotal: course.courses.totalQuestions ?? 0,
+                    startedAt: course.enrollments.startedAt,
+                    completedAt: course.enrollments.completedAt
                 }
             })
         }
@@ -55,7 +60,9 @@ export default async function Dashboard() {
                 progress: {
                     questionsAnswered: 0,
                     questionsCorrect: 0,
-                    startedAt: new Date()
+                    questionsTotal: course.courses.totalQuestions ?? 0,
+                    startedAt: new Date(),
+                    completedAt: null
                 }
             })
         }
@@ -63,14 +70,14 @@ export default async function Dashboard() {
     //const userInfo = (await getUserInfo('41c31059-291a-490c-adaa-5d567316c358')).at(0)
     return (
         <main className="flex-1">
-            {!data.user.phone &&
+            {false &&
                 <Banner id="add-phone-banner">
                     <span className="text-center">
                         <Link href="#">Add your phone number</Link> to enable SMS-based learning!
                     </span>
                 </Banner>
             }
-            <div className="container">
+            <div className="container mt-2">
                 Hello {userName}
             </div>
             <div>
@@ -80,8 +87,9 @@ export default async function Dashboard() {
                         <li key={key}>
                             <CourseCard
                                 myCourse={course}
-                                formAction={((course.status === CourseStatus.NotStarted || course.status === CourseStatus.Inactive) && enroll)
+                                formAction={((course.status === CourseStatus.NotStarted || course.status === CourseStatus.Inactive) && enrollAndLaunchCourse)
                                     || (course.status === CourseStatus.Active && withdraw)
+                                    || (course.status === CourseStatus.Completed && restartTestingOnly)
                                 }
                                 launchAction={launchCourse}
                             >

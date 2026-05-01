@@ -33,13 +33,11 @@ export async function dbEnrollInCourse(userId: string, courseId: string) {
             userId: userId,
             courseId: courseId,
             status: CourseStatus.Active,
-            questionsAnswered: 0,
             correctAnswers: 0
         })
         .onConflictDoUpdate({
             target: [enrollmentsTable.userId, enrollmentsTable.courseId],
             set: {
-                questionsAnswered: 0,
                 correctAnswers: 0,
                 status: CourseStatus.Active,
                 startedAt: sql`now()`
@@ -49,7 +47,7 @@ export async function dbEnrollInCourse(userId: string, courseId: string) {
 
 export async function dbWithdrawFromCourse(userId: string, courseId: string) {
     return db.update(enrollmentsTable)
-        .set({ status: CourseStatus.Inactive })
+        .set({ status: CourseStatus.Inactive, completedAt: null })
         .where(
             and(
                 eq(enrollmentsTable.userId, userId),

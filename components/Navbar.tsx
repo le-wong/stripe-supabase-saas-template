@@ -9,7 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { CartButton } from "./Cart"
 import { createClient } from "@/utils/supabase/server"
 import { AuthNav } from "./auth/AuthNavBar"
-
+import MyIcon from "./ui/app-icon"
 
 export default async function Navbar() {
     const supabase = await createClient();
@@ -20,7 +20,9 @@ export default async function Navbar() {
             <div className="container flex h-14 max-w-screen-2xl items-center">
                 <div className="mr-4 hidden md:flex">
                     <Link className="mr-2 flex items-center space-x-2" href="/">
-                        <Image src="/logo.png" alt="logo" width={25} height={25} />
+                        {//<Image src="/logo.png" alt="logo" width={25} height={25} />
+                        }
+                        <MyIcon size="icon"></MyIcon>
                     </Link>
                     <nav className="flex items-center space-x-6 text-sm font-medium">
                         <Link className="transition-colors hover:text-foreground/80 text-foreground" href="/">

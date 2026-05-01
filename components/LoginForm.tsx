@@ -5,13 +5,19 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useActionState } from 'react'
 import { loginUser } from '@/app/auth/actions'
-export default function LoginForm() {
+
+interface LoginProps {
+    from: string
+}
+
+export default function LoginForm(props: LoginProps) {
     const initialState = {
         message: ''
     }
     const [formState, formAction] = useActionState(loginUser, initialState)
     return (<>
         <form action={formAction}>
+            <input type="hidden" name="from" value={props.from} />
             <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input

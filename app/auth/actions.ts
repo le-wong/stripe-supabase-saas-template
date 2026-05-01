@@ -128,6 +128,7 @@ export async function loginUser(currentState: { message: string }, formData: For
     const data = {
         email: formData.get('email') as string,
         password: formData.get('password') as string,
+        from: formData.get('from') as string
     }
 
     const { error } = await supabase.auth.signInWithPassword(data)
@@ -138,7 +139,7 @@ export async function loginUser(currentState: { message: string }, formData: For
 
     revalidatePath('/', 'layout')
     revalidatePath('/dashboard', 'layout')
-    redirect('/dashboard')
+    redirect(data.from)
 }
 
 
@@ -151,8 +152,10 @@ export async function logout() {
 }
 
 
-export async function signInWithGoogle() {
-    const supabase = await createClient()
+export async function signInWithGoogle(formData: FormData) {
+    const supabase = await createClient();
+    const from = formData.get('from') as string;
+
     const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
