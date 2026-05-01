@@ -101,51 +101,18 @@ export default function CourseBlock(props: CourseProps) {
         setCheckSubmit(true);
     }
 
-    const handleFirstQ = () => {
-        setCurrentQuestionIndex(0);
-        setSelectedOption(() => {
-            let startingOption = null;
-            //console.log(questions[currentQuestionIndex - 1])
-            for (const choice of questions[0].choices) {
-                if (choice.userChose) {
-                    startingOption = choice.choiceNumber;
-                    break;
-                }
-            }
-            //console.log(startingOption)
-            return startingOption
-        })
-    }
-
-    const handleFirstUnattemptedQ = () => {
-        //todo
-    }
-
-    const handleFirstSkippedQ = async () => {
-        const unansweredQuestions = await getUnansweredQuestions(props.courseId, props.userId);
-        console.log(unansweredQuestions)
-        let lowestIndex = 1000; //max?
-        for (const question of unansweredQuestions) {
-            if (question.questionNumber && question.questionNumber < lowestIndex) {
-                lowestIndex = question.questionNumber;
-            }
-        }
-
-        if (lowestIndex < 1000) {
-            setCurrentQuestionIndex(lowestIndex - 1);
-            setSelectedOption(null)
-        }
-    }
-
     return (
-        <div>
-            <span className="grid grid-cols-4 gap-4 justify-end rounded-md ring mx-4 p-4">
-                Go to...
-                <Button className="max-w-sm" onClick={handleFirstQ}> First question</Button>
-                <Button className="max-w-xs text-wrap" onClick={handleFirstSkippedQ}> First skipped question</Button>
-                <Button className="max-w-xs text-wrap" onClick={handleFirstUnattemptedQ}> First unattempted question</Button>
-            </span>
-            <br />
+        <div className="">
+            <Card className="m-5">
+                <CardHeader>
+                    <CardTitle className="text-xl font-bold">
+                        Relevant Course Material
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    This is a placeholder
+                </CardContent>
+            </Card>
             <Card className="max-w-lg mx-auto mb-8">
                 <CardHeader>
                     <CardTitle className="text-xl font-bold">Question {questions[currentQuestionIndex].number}</CardTitle>

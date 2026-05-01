@@ -64,7 +64,7 @@ export default function AccountBlock(props: AccountProps) {
 
 
     return (
-        <div className="flex grid-cols-2">
+        <div className="">
             <Card className="p-2 m-5">
                 <CardHeader>
                     <CardTitle>
