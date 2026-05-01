@@ -23,8 +23,6 @@ export default function CourseBlock(props: CourseProps) {
     const questions = props.questions;
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(props.startIndex);
 
-
-
     const [selectedOption, setSelectedOption] = useState(() => {
         let startingOption = null;
 
@@ -37,7 +35,6 @@ export default function CourseBlock(props: CourseProps) {
         //console.log(startingOption)
         return startingOption
     });
-
 
     const [checkSubmit, setCheckSubmit] = useState(false);
 
@@ -97,17 +94,11 @@ export default function CourseBlock(props: CourseProps) {
         const userAnswerId = selectedOption ? questions[currentQuestionIndex].choices[selectedOption - 1].id : null;
         await saveCourseQuestion(props.courseId, props.userId, questions[currentQuestionIndex].id, userAnswerId)
 
-
         const unansweredQuestions = await getUnansweredQuestions(props.courseId, props.userId);
-        console.log(unansweredQuestions)
-        if (unansweredQuestions.length > 0) {
-            setSubmitMessage("Are you sure you want to finalize your answers and submit? " + (unansweredQuestions.length === 1 ? "There is 1 unanswered question!" : `There are ${unansweredQuestions.length} unanswered questions!`))
-        }
-        else {
-            setSubmitMessage("Are you sure you want to finalize your answers and submit?")
-        }
+        //console.log(unansweredQuestions)
+        setSubmitMessage(unansweredQuestions.length === 0 ? "" :
+            (unansweredQuestions.length === 1 ? "There is 1 unanswered question!" : `There are ${unansweredQuestions.length} unanswered questions!`));
         setCheckSubmit(true);
-
     }
 
     const handleFirstQ = () => {
@@ -148,23 +139,13 @@ export default function CourseBlock(props: CourseProps) {
 
     return (
         <div>
-            <span className="grid grid-cols-5 gap-4 justify-end rounded-md ring mx-4 p-4">
+            <span className="grid grid-cols-4 gap-4 justify-end rounded-md ring mx-4 p-4">
                 Go to...
                 <Button className="max-w-sm" onClick={handleFirstQ}> First question</Button>
-                <Button className="max-w-xs" onClick={handleFirstSkippedQ}> First skipped question</Button>
-                <Button className="max-w-xs" onClick={handleFirstUnattemptedQ}> First unattempted question</Button>
+                <Button className="max-w-xs text-wrap" onClick={handleFirstSkippedQ}> First skipped question</Button>
+                <Button className="max-w-xs text-wrap" onClick={handleFirstUnattemptedQ}> First unattempted question</Button>
             </span>
             <br />
-            {false &&
-                <span >
-                    <form action={formAction} className="grid grid-cols-3 grid-rows-1 gap-4 justify-end px-6">
-                        <input type="hidden" name="user" value={props.userId} />
-                        <input type="hidden" name="course" value={props.courseId} />
-                        <p className="col-span-2">{submitMessage}</p>
-                        <Button className="max-w-xs col-start-3" type="submit">Submit!</Button>
-                    </form>
-                </span>}
-            <br></br>
             <Card className="max-w-lg mx-auto mb-8">
                 <CardHeader>
                     <CardTitle className="text-xl font-bold">Question {questions[currentQuestionIndex].number}</CardTitle>
@@ -198,7 +179,7 @@ export default function CourseBlock(props: CourseProps) {
                 <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
                     <DialogPanel className="max-w-lg space-y-4 bg-white p-8 rounded-lg">
                         <DialogTitle className="font-bold">Submit Course Exam</DialogTitle>
-                        <Description>{submitMessage}</Description>
+                        <Description>{`Are you sure you want to finalize your answers and submit? ${submitMessage}`}</Description>
                         <div className="flex gap-4 items-center">
                             <Button onClick={() => setCheckSubmit(false)}>Cancel</Button>
                             <form action={formAction} className="">
