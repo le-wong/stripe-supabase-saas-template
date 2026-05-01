@@ -11,21 +11,14 @@ export const usersTable = pgTable('users_table', {  // users_table
 
 export const licensesTable = pgTable('licenses_table', {
     id: uuid('id').primaryKey().defaultRandom(),
-    typeId: uuid('type_id').references(() => licenseTypeTable.id, { onDelete: 'set null' }),
+    type: text('type').notNull(),
     licenseNumber: text('license_number').notNull(),
     stateId: uuid('state_id').references(() => statesTable.id, { onDelete: 'set null' }),
     userId: uuid('user_id')
         .notNull()
         .references(() => usersTable.id, { onDelete: 'cascade' }),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-},
-    (table) => ({
-        userCourseUnique: unique("license_user_type_state_unique").on(
-            table.userId,
-            table.typeId,
-            table.stateId
-        ),
-    })
+}
 );
 
 export const licenseTypeTable = pgTable('license_type_table', {

@@ -1,40 +1,46 @@
 import { db } from "@/utils/db/db";
-import { usersTable, licensesTable, licenseTypeTable, statesTable } from "@/utils/db/schema";
-import { eq, sql } from "drizzle-orm";
+import { usersTable, licensesTable, statesTable } from "@/utils/db/schema";
+import { eq, sql, asc } from "drizzle-orm";
 
 export async function dbGetLicenseInfo(userId: string) {
     return db.select()
         .from(licensesTable)
         .leftJoin(usersTable, eq(licensesTable.userId, usersTable.id))
-        .leftJoin(licenseTypeTable, eq(licensesTable.typeId, licenseTypeTable.id))
         .leftJoin(statesTable, eq(licensesTable.stateId, statesTable.id))
-        .where(eq(licensesTable.userId, userId));
+        .where(eq(licensesTable.userId, userId))
+        .orderBy(asc(licensesTable.type));
 }
 
 export async function dbSetLicenseInfo(userId: string, licenseNumber: string, licenseState: string, licenseType: string) {
-
-    const licenseTypeId = db.$with('license_type_id').as(
-        db.select({ id: licenseTypeTable.id }).from(licenseTypeTable).where(eq(licenseTypeTable.type, licenseType))
-    )
 
     const licenseStateId = db.$with('license_state_id').as(
         db.select({ id: statesTable.id }).from(statesTable).where(eq(statesTable.state, licenseState))
     )
 
-    return db.with(licenseTypeId, licenseStateId)
+    return db.with(licenseStateId)
         .insert(licensesTable)
         .values({
             userId: userId,
             licenseNumber: licenseNumber,
             stateId: sql`(select id from ${licenseStateId})`,
-            typeId: sql`(select id from ${licenseTypeId})`,
+            type: licenseType
         })
-        .onConflictDoUpdate({
-            target: [licensesTable.userId, licensesTable.stateId, licensesTable.typeId],
-            set: {
-                licenseNumber: licenseNumber
-            },
+}
+
+//todo: add check to confirm correct user's license?
+export async function dbUpdateLicenseInfo(licenseId: string, licenseNumber: string, licenseType: string, licenseState: string) {
+    const licenseStateId = db.$with('license_state_id').as(
+        db.select({ id: statesTable.id }).from(statesTable).where(eq(statesTable.state, licenseState))
+    )
+
+    return db.with(licenseStateId)
+        .update(licensesTable)
+        .set({
+            licenseNumber: licenseNumber,
+            type: licenseType,
+            stateId: sql`(select id from ${licenseStateId})`
         })
+        .where(eq(licensesTable.id, licenseId))
 }
 
 export async function dbRemoveLicense(id: string) {

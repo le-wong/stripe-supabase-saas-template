@@ -4,7 +4,7 @@ import { dbGetAllEnrollmentsForUser, dbWithdrawFromCourse, dbEnrollInCourse } fr
 import { getUserEntitlements } from '@/utils/db/entitlements'
 import { redirect } from "next/navigation"
 import { revalidatePath } from 'next/cache'
-import { dbGetLicenseInfo, dbSetLicenseInfo, dbRemoveLicense } from '@/utils/db/licenses'
+import { dbGetLicenseInfo, dbSetLicenseInfo, dbRemoveLicense, dbUpdateLicenseInfo } from '@/utils/db/licenses'
 import { dbRestartCourseTestingOnly } from '@/utils/db/courses'
 
 export async function getUserInfo(userId: string) {
@@ -23,8 +23,15 @@ export async function getLicenseInfo(userId: string) {
     return await dbGetLicenseInfo(userId);
 }
 
-export async function updateLicenseInfo(userId: string, licenseNumber: string, licenseState: string, licenseType: string) {
+export async function addLicenseInfo(userId: string, licenseNumber: string, licenseState: string, licenseType: string) {
     await dbSetLicenseInfo(userId, licenseNumber, licenseState, licenseType);
+
+    revalidatePath('/profile', 'page')
+    redirect('/profile')
+}
+
+export async function updateLicenseInfo(licenseId: string, licenseNumber: string, licenseState: string, licenseType: string) {
+    await dbUpdateLicenseInfo(licenseId, licenseNumber, licenseType, licenseState)
 
     revalidatePath('/profile', 'page')
     redirect('/profile')

@@ -22,7 +22,7 @@ export default async function Profile() {
     for (const license of userLicenseInfo) {
         userLicenses.push({
             id: license.licenses_table.id,
-            type: license.license_type_table?.type,
+            type: license.licenses_table.type,
             state: license.states_table?.state,
             number: license.licenses_table.licenseNumber
         })
@@ -40,7 +40,7 @@ export default async function Profile() {
             <div className="container">
                 Hello {user?.name}
             </div>
-            {user ? <AccountBlock userId={user.id} name={user.name} email={user.email} phone={phoneNumber} license={userLicenses}></AccountBlock>
+            {user ? <AccountBlock userId={user.id} name={user.name} email={user.email} emailVerified={data.user.user_metadata.email_verified} phone={phoneNumber} license={userLicenses}></AccountBlock>
                 : <p>Uh oh, this link is broken</p>}
         </main >)
 
