@@ -46,10 +46,16 @@ export async function updateSession(request: NextRequest) {
         !request.nextUrl.pathname.startsWith('/signup') &&
         !request.nextUrl.pathname.startsWith('/forgot-password') &&
         !request.nextUrl.pathname.startsWith('/products') &&
+        !request.nextUrl.pathname.startsWith('/checkout') &&
         !(request.nextUrl.pathname === '/')
     ) {
         // no user, potentially respond by redirecting the user to the login page
         url.pathname = '/login'
+        return NextResponse.redirect(url)
+    }
+    //If user is logged in and tries to access /login, redirect to dashboard
+    if (user && request.nextUrl.pathname.startsWith('/login')) {
+        url.pathname = '/dashboard'
         return NextResponse.redirect(url)
     }
     //If user is logged in and attempting to launch a course, try to get the course info and pass it to the server component
