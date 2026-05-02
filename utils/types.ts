@@ -50,7 +50,7 @@ export interface Question {
     id: string,
     number: number,
     text: string,
-    choices: QuestionChoice[],
+    choices: QuestionChoice[]
 }
 
 export interface QuestionChoice {

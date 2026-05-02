@@ -15,15 +15,10 @@ export const CourseProgressCard = (props: ProgressProps) => {
 
     return (
 
-        <Card className="max-w-full mx-auto mb-8">
+        <Card className="max-w-full mx-auto mb-0">
             <CardHeader>
                 <CardTitle className="text-xl font-bold">{props.courseName}</CardTitle>
             </CardHeader>
-            <CardContent style={{ whiteSpace: 'pre-line' }}>
-                <div className="mt-6 grid grid-cols-1 gap-2">
-                    Progress: {props.questionsAnswered} answered / {props.questionsTotal}
-                </div>
-            </CardContent>
         </Card>
     )
 };

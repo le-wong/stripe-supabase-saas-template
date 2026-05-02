@@ -25,15 +25,17 @@ export default async function WebCourse(request: NextRequest) {
         questionsAnswered: 0,
         questionsTotal: 0
     }
-
-    console.log(courseProgress)
+    //console.log(courseInfo)
+    //console.log(courseProgress)
     const courseQuestions = await getCourseQuestions(courseInfo.id);
     const startingQuestion = (await getUnattemptedCourseQuestions(courseInfo.id, userId)).at(0)?.number;
     const answeredQuestions = await getAnsweredQuestions(courseInfo.id, userId);
     const fixedCourseQuestions: Map<number, Question> = new Map();
+    const answeredQuestionSet: Set<number> = new Set();
     for (const question of courseQuestions) {
         const mapQuestion = fixedCourseQuestions.get(question.number);
         const answered = answeredQuestions.get(question.id);
+        const isAnswered = answered ? (answered.length > 0 ? true : false) : false
         if (mapQuestion) {
             mapQuestion.choices.push({
                 id: question.choiceId ?? "",
@@ -52,24 +54,24 @@ export default async function WebCourse(request: NextRequest) {
                     choiceNumber: question.choiceNumber ?? -1,
                     choiceText: question.choiceText ?? "",
                     userChose: answered === question.choiceId
-                }]
+                }],
             })
+            if (isAnswered) {
+                answeredQuestionSet.add(question.number);
+            }
         }
     }
     //console.log(fixedCourseQuestions)
 
+
     return (
         <>
-            {courseProgress && courseProgress.courseName && <CourseProgressCard
-                courseName={courseProgress.courseName}
-                questionsAnswered={courseProgress.questionsAnswered as number ?? 0}
-                questionsTotal={courseProgress?.questionsTotal ?? 0}
-            >
-            </CourseProgressCard>}
             {fixedCourseQuestions.size > 0 ? <CourseBlock
                 courseId={courseInfo.id}
+                courseName={courseProgress.courseName ?? ""}
                 userId={userId}
                 questions={Array.from(fixedCourseQuestions.values())}
+                answeredQuestions={answeredQuestionSet}
                 startIndex={startingQuestion ? startingQuestion - 1 : 0} />
                 : <span className="px-4">Oh no... our (questions) table... it's broken........</span>
             }

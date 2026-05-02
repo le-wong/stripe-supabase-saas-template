@@ -23,7 +23,9 @@ export default async function RootLayout({
         <main>
           {children}
         </main>
+        <div className="py-4 px-2 bg-gray-700 text-white text-center w-full sticky bottom-0">Remember to add a footer...</div>
       </body>
+
     </html>
   );
 }
