@@ -29,7 +29,7 @@ export default function CourseBlock(props: CourseProps) {
     const [checkSubmit, setCheckSubmit] = useState(false);
     const [formState, formAction] = useActionState(completeCourse, initialMessage)
     const [submitMessage, setSubmitMessage] = useState("")
-    const isFirstRender = useRef(true);
+
 
     function startingChoice(question: Question) {
         let startingOption = null;
@@ -50,6 +50,12 @@ export default function CourseBlock(props: CourseProps) {
     }
 
     async function saveQuestion(index: number, option: number | null) {
+        //don't save question when initially setting selectedOption(null)
+        //this happens on first render
+        if (!option && !answeredQuestions.has(index + 1)) {
+            return
+        }
+
         const userAnswerId = option ? questions[index].choices[option - 1].id : null;
         await saveCourseQuestion(props.courseId, props.userId, questions[index].id, userAnswerId)
 
@@ -77,18 +83,11 @@ export default function CourseBlock(props: CourseProps) {
     }
 
     useEffect(() => {
-        if (isFirstRender.current) {
-            isFirstRender.current = false;
-            return;
-        }
-
         const saveQ = async () => {
             await saveQuestion(currentQuestionIndex, selectedOption);
         };
-
         saveQ();
     }, [selectedOption]);
-
 
     const handleNext = async () => {
         if (currentQuestionIndex < questions.length - 1) {
@@ -125,6 +124,7 @@ export default function CourseBlock(props: CourseProps) {
     }
 
     const onJumpToQuestion = (num: number) => {
+        //display number is one offset from question index
         if (num > 0 && num <= questions.length) {
             setCurrentQuestionIndex(num - 1)
 
@@ -134,34 +134,34 @@ export default function CourseBlock(props: CourseProps) {
         }
     }
 
-
     return (
-        <div className="flex flex-1 overflow-hidden relative">
-            <aside className=" fixed top-14 bottom-14 inset-y-0  overflow-y-auto border-r mr-4 w-1/5">
-                <div className="bg-gray-100  p-4 ">
-                    <h2 className="text-lg font-semibold mb-4">{`Course Progress ${answeredQuestions.size}/${questions.length}`}</h2>
-                    <ol className="space-y-2 ">
-                        {Array.from({ length: questions.length + 50 }, (_, i) => {
-                            const qNum = i + 1;
-                            const qIsAnswered = isAnswered(qNum);
-                            return (
-                                <li key={qNum}>
-                                    <Button onClick={() => onJumpToQuestion(qNum)} className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors 
+        <div className="flex flex-1 overflow-hidden">
+            <div className="w-1/5 pr-4">
+                <aside className=" fixed top-14 bottom-14 inset-y-0  overflow-y-auto border-r mr-4 w-1/5">
+                    <div className="bg-gray-100  p-4 ">
+                        <h2 className="text-lg font-semibold mb-4">{`Course Progress ${answeredQuestions.size}/${questions.length}`}</h2>
+                        <ol className="space-y-2 ">
+                            {Array.from({ length: questions.length + 50 }, (_, i) => {
+                                const qNum = i + 1;
+                                const qIsAnswered = isAnswered(qNum);
+                                return (
+                                    <li key={qNum}>
+                                        <Button onClick={() => onJumpToQuestion(qNum)} className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors 
                                     ${(currentQuestionIndex + 1) === qNum
-                                            ? 'bg-blue-100 text-blue-800 border-l-4 border-blue-500'
-                                            : qIsAnswered
-                                                ? 'bg-green-100 text-green-800'
-                                                : 'bg-gray-200 text-gray-700 hover:bg-gray-200'
-                                        }`}>
-                                        Q{qNum} {qIsAnswered && 'V'}
-                                    </Button>
-                                </li>
-                            );
-                        })}
-                    </ol>
-                </div>
-            </aside>
-            <div className="w-1/5 pr-4"></div>
+                                                ? 'bg-blue-100 text-blue-800 border-l-4 border-blue-500'
+                                                : qIsAnswered
+                                                    ? 'bg-green-100 text-green-800'
+                                                    : 'bg-gray-200 text-gray-700 hover:bg-gray-200'
+                                            }`}>
+                                            Q{qNum} {qIsAnswered && 'V'}
+                                        </Button>
+                                    </li>
+                                );
+                            })}
+                        </ol>
+                    </div>
+                </aside>
+            </div>
             <span className=" w-4/5 flex grid grid-cols-1 overflow-y-auto ">
                 <div className="border text-2xl font-bold p-2 bg-sky-300">{props.courseName}</div>
                 <Disclosure as="div" className="border rounded-lg my-1 p-5 w-full justify-self-center">
